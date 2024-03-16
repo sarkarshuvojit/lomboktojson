@@ -12,18 +12,33 @@ const (
 	EOF            TokenType = iota
 	STRING_LITERAL TokenType = iota
 	NUM_LITERAL    TokenType = iota
+	NEWLINE        TokenType = iota
 )
 
 type Token struct {
-	tokenType TokenType
-	lexeme    string
-	literal   map[string]string
-	line      int8
+	Type    TokenType
+	Lexeme  string
+	Literal map[string]string
+	Line    int8
 }
 
 func (t Token) ToString() string {
 	return fmt.Sprintf(
 		"%d %s %s",
-		t.tokenType, t.lexeme, t.literal,
+		t.Type, t.Lexeme, t.Literal,
 	)
+}
+
+func NewToken(
+	tokenType TokenType,
+	lexeme string,
+	literal map[string]string,
+	line int8,
+) Token {
+	return Token{
+		Type:    tokenType,
+		Lexeme:  lexeme,
+		Literal: literal,
+		Line:    line,
+	}
 }
