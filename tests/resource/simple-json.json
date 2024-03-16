@@ -1,0 +1,8 @@
+{
+    "name": "John",
+    "age": 30,
+    "telephone": {
+        "codeArea": 16,
+        "number": "1111-2222"
+    }
+}
