@@ -70,8 +70,6 @@ func (s *Scanner) Scan() []types.Token {
 
 	for chIdx := range s.sourceBytes {
 		ch := string(s.sourceBytes[chIdx])
-		fmt.Printf("%d %s\n", chIdx, ch)
-		fmt.Println(string(s.sourceBytes[s.start : s.end+1]))
 		switch ch {
 		case "(":
 			s.clearStringLiterals()
