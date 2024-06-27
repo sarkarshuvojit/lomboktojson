@@ -60,6 +60,22 @@ func (s *Scanner) stringLiteralToToken(literal string) types.Token {
 			s.curline,
 		)
 	}
+	if s.sourceBytes[s.literalEnd+1] == '=' {
+		return types.NewToken(
+			types.KEY,
+			string(literal),
+			nil,
+			s.curline,
+		)
+	}
+	if s.sourceBytes[s.literalStart-1] == '=' {
+		return types.NewToken(
+			types.VALUE,
+			string(literal),
+			nil,
+			s.curline,
+		)
+	}
 	return types.NewToken(
 		types.STRING_LITERAL,
 		string(literal),
