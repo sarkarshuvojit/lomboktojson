@@ -51,6 +51,24 @@ func isAlpha(ch string) bool {
 	return unicode.IsLetter([]rune(ch)[0])
 }
 
+func (s *Scanner) stringLiteralToToken(literal string) types.Token {
+	if s.sourceBytes[s.literalEnd+1] == '(' {
+		return types.NewToken(
+			types.CLASS_NAME,
+			string(literal),
+			nil,
+			s.curline,
+		)
+	}
+	return types.NewToken(
+		types.STRING_LITERAL,
+		string(literal),
+		nil,
+		s.curline,
+	)
+
+}
+
 func (s *Scanner) clearStringLiterals() {
 	if s.literalStarted {
 		literal := s.sourceBytes[s.literalStart : s.literalEnd+1]
@@ -60,6 +78,7 @@ func (s *Scanner) clearStringLiterals() {
 			nil,
 			s.curline,
 		)
+		_token = s.stringLiteralToToken(string(literal))
 		s.tokens = append(s.tokens, _token)
 		s.literalStarted = false
 		s.literalStart = -1
