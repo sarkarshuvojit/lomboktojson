@@ -2,7 +2,6 @@ package lib_test
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 
 	"github.com/sarkarshuvojit/lomboktojson/lib"
@@ -72,8 +71,6 @@ func Test_ScanTheCustomer(t *testing.T) {
 		scanner := lib.NewScanner(&sourceBuf)
 		tokens := scanner.Scan()
 
-		// Customer | ParenOpen | Key | EQUALS | Value | PAREN_CLOSE | EOF
-		// 0			1			2	3		4		5			6
 		expectedTokenLen := 7
 		if len(tokens) != expectedTokenLen {
 			t.Errorf("Should return %d token for EOF, got %d", expectedTokenLen, len(tokens))
@@ -88,8 +85,6 @@ func Test_ScanTheCustomer(t *testing.T) {
 				t.Errorf("Token #%d lexeme expected %s got %s", i+1, expectedToken, tokens[i].Lexeme)
 			}
 		}
-
-		fmt.Println(tokens)
 	})
 	t.Run("Should scan customer with name: TokenTypes", func(t *testing.T) {
 		source := `Customer(name=Rajesh Kumar)`
