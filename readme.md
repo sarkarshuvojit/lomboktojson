@@ -3,6 +3,7 @@
 
 
 ![rough idea](docs/assets/high-level-idea.png)
+![rough idea](docs/assets/high-level-idea-clear.png)
 
 ## License
 
