@@ -51,6 +51,15 @@ func isAlpha(ch string) bool {
 	return unicode.IsLetter([]rune(ch)[0])
 }
 
+func isNum(ch string) bool {
+	// TODO: Optimisation: Search whole string
+	return unicode.IsDigit([]rune(ch)[0])
+}
+
+func isLiteral(ch string) bool {
+	return isAlpha(ch) || isNum(ch)
+}
+
 func (s *Scanner) stringLiteralToToken(literal string) types.Token {
 	if s.sourceBytes[s.literalEnd+1] == '(' {
 		return types.NewToken(
@@ -137,10 +146,19 @@ func (s *Scanner) Scan() []types.Token {
 				s.curline,
 			)
 			s.tokens = append(s.tokens, _token)
-			s.parenOpen--
+			break
+		case ",":
+			s.clearStringLiterals()
+			_token := types.NewToken(
+				types.COMMA,
+				ch,
+				nil,
+				s.curline,
+			)
+			s.tokens = append(s.tokens, _token)
 			break
 		default:
-			if isAlpha(ch) {
+			if isLiteral(ch) {
 				if s.literalStarted {
 					s.literalEnd = chIdx
 				} else {
