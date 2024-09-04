@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lombok to JSON Converter (HTMX)</title>
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center p-4">
+    <div class="w-full max-w-6xl bg-white rounded-xl shadow-2xl overflow-hidden">
+        <div class="p-6 bg-gray-800 text-white">
+            <h1 class="text-3xl font-bold text-center">Lombok to JSON Converter</h1>
+        </div>
+        <div class="p-6 space-y-6">
+            <div class="flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0">
+                <div class="flex-1 space-y-2">
+                    <label for="lombok" class="block text-sm font-medium text-gray-700">Lombok Input</label>
+                    <textarea
+                        id="lombok"
+                        name="lombok"
+                        class="w-full h-80 p-3 text-sm bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                        placeholder="Paste your Lombok code here..."
+                    ></textarea>
+                </div>
+                <div class="flex-1 space-y-2">
+                    <label for="json" class="block text-sm font-medium text-gray-700">JSON Output</label>
+                    <div class="relative">
+                        <textarea
+                            id="json"
+                            class="w-full h-80 p-3 text-sm bg-gray-50 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                            placeholder="Converted JSON will appear here..."
+                            readonly
+                        ></textarea>
+                        <button
+                            class="absolute top-2 right-2 p-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 transition"
+                            onclick="copyToClipboard()"
+                        >
+                            <i data-lucide="copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-center">
+                <button
+                    class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
+                    hx-post="/convert"
+                    hx-trigger="click"
+                    hx-target="#json"
+                    hx-include="#lombok"
+                >
+                    <span>Convert</span>
+                    <i data-lucide="arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Function to copy JSON to clipboard
+        function copyToClipboard() {
+            const jsonTextarea = document.getElementById('json');
+            jsonTextarea.select();
+            document.execCommand('copy');
+            
+            // Visual feedback (you might want to replace this with a more subtle indication)
+            alert('Copied to clipboard!');
+        }
+
+        // Simulate server response for demonstration
+        htmx.on("htmx:afterRequest", function(evt) {
+            if (evt.detail.elt.id === "json") {
+                evt.detail.elt.value = JSON.stringify({
+                    message: "This is a simulated JSON response.",
+                    input: document.getElementById('lombok').value
+                }, null, 2);
+            }
+        });
+    </script>
+</body>
+</html>
