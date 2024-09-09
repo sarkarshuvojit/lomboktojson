@@ -7,6 +7,41 @@
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="wasm_exec.js"></script>
+    <script>
+        const go = new Go();
+        WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then((result) => {
+            go.run(result.instance);
+            console.log(result);
+            console.log(lombok2json("Customer(name=Rahu)"));
+        });
+
+        // Function to handle the conversion
+        function convertLombokToJson() {
+            const lombokTextarea = document.getElementById('lombok');
+            const jsonTextarea = document.getElementById('json');
+            const lombokInput = lombokTextarea.value;
+
+            // Call the conversion function and set the result to the JSON textarea
+            const jsonOutput = lombok2json(lombokInput);
+            jsonTextarea.value = jsonOutput;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const convertButton = document.getElementById('convertButton');
+            convertButton.addEventListener('click', convertLombokToJson);
+        });
+
+        // Function to copy JSON to clipboard
+        function copyToClipboard() {
+            const jsonTextarea = document.getElementById('json');
+            jsonTextarea.select();
+            document.execCommand('copy');
+            
+            // Visual feedback (you might want to replace this with a more subtle indication)
+            alert('Copied to clipboard!');
+        }
+    </script>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center p-4">
     <div class="w-full max-w-6xl bg-white rounded-xl shadow-2xl overflow-hidden">
@@ -44,11 +79,8 @@
             </div>
             <div class="flex justify-center">
                 <button
+                    id="convertButton"
                     class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
-                    hx-post="/convert"
-                    hx-trigger="click"
-                    hx-target="#json"
-                    hx-include="#lombok"
                 >
                     <span>Convert</span>
                     <i data-lucide="arrow-right"></i>
@@ -60,26 +92,6 @@
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
-
-        // Function to copy JSON to clipboard
-        function copyToClipboard() {
-            const jsonTextarea = document.getElementById('json');
-            jsonTextarea.select();
-            document.execCommand('copy');
-            
-            // Visual feedback (you might want to replace this with a more subtle indication)
-            alert('Copied to clipboard!');
-        }
-
-        // Simulate server response for demonstration
-        htmx.on("htmx:afterRequest", function(evt) {
-            if (evt.detail.elt.id === "json") {
-                evt.detail.elt.value = JSON.stringify({
-                    message: "This is a simulated JSON response.",
-                    input: document.getElementById('lombok').value
-                }, null, 2);
-            }
-        });
     </script>
 </body>
 </html>

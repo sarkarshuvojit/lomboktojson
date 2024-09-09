@@ -1,18 +1,26 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
+	"syscall/js"
 
 	"github.com/sarkarshuvojit/lomboktojson/lib"
 )
 
-func main() {
-	source := `Customer()`
-	var sourceBuf bytes.Buffer
-	sourceBuf.WriteString(source)
+func lombok2JsonWrapper() js.Func {
+	lombok2Jsonfunc := js.FuncOf(func(this js.Value, args []js.Value) any {
+		if len(args) != 1 {
+			return "Invalid no of arguments passed"
+		}
+		in := args[0].String()
+		return lib.LombokToJson(in)
+	})
+	return lombok2Jsonfunc
+}
 
-	scanner := lib.NewScanner(&sourceBuf)
-	tokens := scanner.Scan()
-	fmt.Println(tokens)
+func main() {
+	ch := make(chan struct{}, 0)
+	fmt.Println("Go Web Assembly")
+	js.Global().Set("lombok2json", lombok2JsonWrapper())
+	<-ch
 }

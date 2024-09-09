@@ -28,7 +28,7 @@ func (c Converter) Convert(tokens []types.Token) string {
 		case types.EQUALS:
 			finals = append(finals, ":")
 		case types.VALUE:
-			finals = append(finals, fmt.Sprintf(`"%s"`, token.Lexeme))
+			finals = append(finals, fmt.Sprintf(`"%s",`, token.Lexeme))
 		}
 	}
 	if len(finals) == 0 {
