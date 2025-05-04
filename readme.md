@@ -31,17 +31,17 @@ LombokToJson bridges this gap by providing a simple conversion utility.
 ## Installation
 
 ```bash
-go get github.com/yourusername/lombok-to-json
+go get github.com/sarkarshuvojit/lombok-to-json
 ```
 
 ## Usage
 
 ```go
-import "github.com/yourusername/lombok-to-json"
+import "github.com/sarkarshuvojit/lombok-to-json"
 
 // Convert a Lombok toString string to JSON
 lombokStr := "Customer(name=Raju,email=raju@gmail.com,age=15)"
-jsonStr, err := lombokToJson.Convert(lombokStr)
+jsonStr, err := lombokToJson.GetJson(lombokStr)
 
 // Result: {"name":"Raju","email":"raju@gmail.com","age":15}
 ```
