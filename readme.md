@@ -1,35 +1,82 @@
-
 # LombokToJson
 
-## Abstract
-![rough idea](docs/assets/high-level-idea-clear.png)
+A lightweight utility that converts Lombok's default `toString()` output format to standard JSON format.
 
-## Test Locally
+![Conversion Example](docs/assets/high-level-idea-clear.png)
 
-### Using go 
+## Problem
 
-```bash
-$ go test 
-$ go test -v ./... # for verbose tests
+When using Lombok's `@ToString` or `@Data` annotations in Java classes, log output is generated in Lombok's specific format:
+
+```
+Customer(name=Raju,email=raju@gmail.com,age=15)
 ```
 
-### Live reload (tdd)
+This format isn't easily parseable by standard tools that expect JSON:
 
-Prerequisites: Install [air](https://github.com/air-verse/air) 
-
-```bash
-$ air
+```json
+{ "name": "Raju", "email": "raju@gmail.com", "age": 15 }
 ```
 
-### Using make
+LombokToJson bridges this gap by providing a simple conversion utility.
+
+## Features
+
+- Convert Lombok's toString format to standard JSON
+- Simple API for integration into existing projects
+- No external dependencies
+- High performance parsing
+- Supports nested objects and collections
+
+## Installation
 
 ```bash
-$ make test
-$ make testv # for verbose tests
+go get github.com/yourusername/lombok-to-json
+```
+
+## Usage
+
+```go
+import "github.com/yourusername/lombok-to-json"
+
+// Convert a Lombok toString string to JSON
+lombokStr := "Customer(name=Raju,email=raju@gmail.com,age=15)"
+jsonStr, err := lombokToJson.Convert(lombokStr)
+
+// Result: {"name":"Raju","email":"raju@gmail.com","age":15}
+```
+
+## Testing
+
+### Using Go's built-in test tool
+
+```bash
+# Run tests
+go test
+
+# Run tests with verbose output
+go test -v ./...
+```
+
+### Development with live reload
+
+Prerequisites: Install [air](https://github.com/air-verse/air)
+
+```bash
+# Run tests automatically on file changes
+air
+```
+
+### Using Makefile
+
+```bash
+# Run tests
+make test
+
+# Run tests with verbose output
+make testv
 ```
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
-
-
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
