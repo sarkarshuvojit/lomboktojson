@@ -15,6 +15,8 @@ const (
 	CLASS_NAME     TokenType = "CLASS_NAME"
 	KEY            TokenType = "KEY"
 	VALUE          TokenType = "VALUE"
+	ARRAY_OPEN TokenType = "ARRAY_OPEN"
+	ARRAY_CLOSE TokenType = "ARRAY_CLOSE"
 )
 
 type Token struct {

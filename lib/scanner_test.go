@@ -201,3 +201,59 @@ func Test_ScanTheCustomerWithMultipleFieldsNested(t *testing.T) {
 
 	})
 }
+
+func Test_ScanTheCustomerWithArrayField(t *testing.T) {
+	source := `Customer(name=Rajesh Kumar,phones=[1234567890, 9876543210])`
+	t.Run("Customer(name, phones[]): TokenLengh & Lexemes", func(t *testing.T) {
+		var sourceBuf bytes.Buffer
+		sourceBuf.WriteString(source)
+		scanner := lib.NewScanner(&sourceBuf)
+		tokens := scanner.Scan()
+
+		expectedTokenLen := 15
+		if len(tokens) != expectedTokenLen {
+			t.Errorf("Should return %d token for EOF, got %d", expectedTokenLen, len(tokens))
+			return
+		}
+
+		expectedTokens := [15]string{
+			"Customer", "(",
+			"name", "=", "Rajesh Kumar", ",",
+			"phones", "=", "[", "1234567890", ",", "9876543210", "]",
+			")"}
+
+		for i := 0; i < len(expectedTokens); i++ {
+			expectedToken := expectedTokens[i]
+			actualToken := tokens[i]
+			if actualToken.Lexeme != expectedToken {
+				t.Errorf("Token #%d lexeme expected %s got %s", i+1, expectedToken, tokens[i].Lexeme)
+			}
+		}
+	})
+	t.Run("Customer(name, phones[]): TokenTypes", func(t *testing.T) {
+		var sourceBuf bytes.Buffer
+		sourceBuf.WriteString(source)
+		scanner := lib.NewScanner(&sourceBuf)
+		tokens := scanner.Scan()
+
+		expectedTokenLen := 15
+		if len(tokens) != expectedTokenLen {
+			t.Errorf("Should return %d token for EOF, got %d", expectedTokenLen, len(tokens))
+			return
+		}
+		expectedTokenTypes := [15]types.TokenType{
+			types.CLASS_NAME, types.PAREN_OPEN,
+			types.KEY, types.EQUALS, types.VALUE, types.COMMA,
+			types.KEY, types.EQUALS, types.ARRAY_OPEN, types.STRING_LITERAL, types.COMMA, types.STRING_LITERAL, types.ARRAY_CLOSE,
+			types.PAREN_CLOSE,
+			types.EOF}
+
+		for i := 0; i < len(expectedTokenTypes); i++ {
+			expectedTokenType := expectedTokenTypes[i]
+			actualToken := tokens[i]
+			if actualToken.Type != expectedTokenType {
+				t.Errorf("Token #%d lexeme expected %s got %s", i+1, expectedTokenType, tokens[i].Type)
+			}
+		}
+	})
+}
