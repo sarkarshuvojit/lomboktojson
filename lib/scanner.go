@@ -157,6 +157,28 @@ func (s *Scanner) Scan() []types.Token {
 			)
 			s.tokens = append(s.tokens, _token)
 			break
+		case "[":
+			s.clearStringLiterals()
+			_token := types.NewToken(
+				types.ARRAY_OPEN,
+				ch,
+				nil,
+				s.curline,
+			)
+			s.tokens = append(s.tokens, _token)
+			s.parenOpen++
+			break
+		case "]":
+			s.clearStringLiterals()
+			_token := types.NewToken(
+				types.ARRAY_CLOSE,
+				ch,
+				nil,
+				s.curline,
+			)
+			s.tokens = append(s.tokens, _token)
+			s.parenOpen++
+			break
 		default:
 			if isLiteral(ch) {
 				if s.literalStarted {
