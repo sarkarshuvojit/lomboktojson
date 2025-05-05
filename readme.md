@@ -74,6 +74,9 @@ grep "Order(" application.log | lomboktojson > $(dirseq)-converted-orders.json
 # Creates: 2-converted-orders.json
 ```
 
+> **Note:** The examples use [dirseq](https://github.com/sarkarshuvojit/dirseq) to generate sequential filenames - a helpful utility for organizing outputs chronologically.
+
+
 ## Problem
 
 When using Lombok's `@ToString` or `@Data` annotations in Java classes, log output is generated in Lombok's specific format:
