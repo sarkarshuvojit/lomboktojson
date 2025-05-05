@@ -15,9 +15,18 @@ func isNumeric(s string) bool {
 	return re.MatchString(s)
 }
 
+func isFloatingPoint(s string) bool {
+	re := regexp.MustCompile(`^-?\d+(\.\d+)?$`)
+	return re.MatchString(s)
+}
 
 func getOptionallyQuotedValue(val string) string {
-	if isNumeric(val) {
+	isNull := val == "null"
+	isBool := val == "true" || val == "false" 
+	isNum := isNumeric(val)
+	isFloat := isFloatingPoint(val)
+
+	if isNull || isBool || isNum || isFloat {
 		return fmt.Sprintf("%s", val)
 	}
 	return fmt.Sprintf("\"%s\"", val)
