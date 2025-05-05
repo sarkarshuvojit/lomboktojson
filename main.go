@@ -8,22 +8,9 @@ import (
 	"io"
 	"os"
 
-	"github.com/sarkarshuvojit/lomboktojson/lib"
+	"github.com/sarkarshuvojit/lomboktojson/pkg"
 )
 
-
-func lombok2Json(in string) string {
-	var sourceBuf bytes.Buffer
-	sourceBuf.WriteString(in)
-
-	scanner := lib.NewScanner(&sourceBuf)
-	tokens := scanner.Scan()
-	if val, err := lib.Generate(tokens); err == nil {
-		return string(val)
-	} else {
-		return "ERROR: Unable to convert at the moment"
-	}
-}
 
 
 func main() {
@@ -70,6 +57,10 @@ func main() {
 	}
 
 	// Process the input
-	output := lombok2Json(input)
+	output, err := pkg.LombokToJson(input)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error reading input: %v\n", err)
+		os.Exit(1)
+	}
 	fmt.Print(output)
 }
