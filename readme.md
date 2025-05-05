@@ -2,6 +2,8 @@
 
 A lightweight utility that converts Lombok's default `toString()` output format to standard JSON format.
 
+[![Run tests](https://github.com/sarkarshuvojit/lomboktojson/actions/workflows/go-run-tests.yml/badge.svg?branch=main)](https://github.com/sarkarshuvojit/lomboktojson/actions/workflows/go-run-tests.yml)
+
 ![Conversion Example](docs/assets/high-level-idea-clear.png)
 
 ## Installation
