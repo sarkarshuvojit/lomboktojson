@@ -92,7 +92,6 @@ func TestConvert(t *testing.T) {
 			},
 			expected: `{"scores":["90","85","95"]}`,
 		},
-		/*
 		{
 			name: "Array of objects",
 			tokens: []types.Token{
@@ -120,7 +119,6 @@ func TestConvert(t *testing.T) {
 			},
 			expected: `{"addresses":[{"street":"123 Main St"},{"street":"456 Oak Ave"}]}`,
 		},
-		*/
 	}
 
 	for _, tt := range tests {
