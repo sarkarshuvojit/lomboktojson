@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LombokToJson - Lombok toString to JSON Converter</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.0/min/vs/loader.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --primary-dark: #4338ca;
+            --secondary: #10b981;
+            --background: #0f172a;
+            --surface-1: #1e293b;
+            --surface-2: #334155;
+            --surface-3: #475569;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #94a3b8;
+            --border: #334155;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--text-primary);
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .editor-container {
+            height: 450px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        @media (max-width: 768px) {
+            .editor-container {
+                height: 350px;
+            }
+        }
+        
+        .button-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+        }
+        
+        .button-secondary {
+            background: linear-gradient(135deg, var(--secondary), #0d9488);
+            transition: all 0.3s ease;
+        }
+        
+        .button-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+        
+        .header-gradient {
+            background: linear-gradient(120deg, #4f46e5, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glow-effect {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            opacity: 0.4;
+        }
+        
+        .code-tabs {
+            background-color: var(--surface-1);
+            border-radius: 0.75rem 0.75rem 0 0;
+            overflow: hidden;
+        }
+        
+        .code-tab {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .code-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        .editor-wrapper {
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            border-radius: 1rem;
+            overflow: hidden;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--surface-1);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--surface-3);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-light);
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .code-tab {
+                font-size: 0.875rem;
+                padding: 0.75rem 1rem;
+            }
+            
+            .glow-effect {
+                opacity: 0.2;
+                filter: blur(60px);
+            }
+        }
+        
+        /* Animation for buttons */
+        .hover-lift {
+            transition: transform 0.2s ease-in-out;
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Dropdown animation */
+        .dropdown-reveal {
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Improved layout for editors */
+        .editors-container {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        @media (min-width: 768px) {
+            .editors-container {
+                flex-direction: row;
+            }
+        }
+        
+        /* Improved buttons */
+        .action-button {
+            backdrop-filter: blur(4px);
+            font-weight: 500;
+        }
+        
+        /* Improved footer */
+        .footer-link {
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .footer-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--primary-light);
+            transition: width 0.3s ease;
+        }
+        
+        .footer-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative overflow-x-hidden">
+    <!-- Background gradients -->
+    <div class="glow-effect bg-indigo-600" style="width:600px; height:600px; top:-300px; right:-300px;"></div>
+    <div class="glow-effect bg-green-500" style="width:500px; height:500px; bottom:-200px; left:-200px;"></div>
+    <div class="glow-effect bg-purple-600" style="width:400px; height:400px; top:30%; left:50%; transform:translateX(-50%);"></div>
+    
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 max-w-7xl relative z-10">
+        <!-- Header -->
+        <header class="text-center mb-8 sm:mb-14">
+            <div class="flex justify-center items-center mb-4 sm:mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 sm:h-10 sm:w-10 text-indigo-500 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+                <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold header-gradient tracking-tight">LombokToJson</h1>
+            </div>
+            <div class="flex items-center justify-center mt-4 sm:mt-6 space-x-4">
+                <div class="flex items-center bg-indigo-900 bg-opacity-30 px-3 py-1 rounded-full">
+                    <div class="h-2 w-2 rounded-full bg-gray-400 mr-2"></div>
+                    <span class="text-gray-400 text-sm">Offline</span>
+                </div>
+                <div class="text-slate-400 text-sm flex items-center">
+<svg class="w-6 h-6 text-white-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 14v3m-3-6V7a3 3 0 1 1 6 0v4m-8 0h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/>
+</svg>
+
+                    <span>No data leaves your browser. Thanks to wasm!</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Editor Area -->
+        <div class="editor-wrapper mb-10 sm:mb-16">
+            <!-- Code Tabs -->
+            <div class="code-tabs flex bg-slate-800 text-slate-300 w-full">
+                <div class="code-tab active px-4 sm:px-6 py-3 flex items-center font-medium text-white flex-1 text-center sm:text-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 mr-2 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                    <span class="hidden xs:inline">Lombok toString</span>
+                    <span class="xs:hidden">Lombok toString</span>
+                </div>
+                <div class="hidden md:flex w-px bg-slate-700 my-2"></div>
+                <div class="code-tab px-4 sm:px-6 py-3 flex items-center font-medium flex-1 text-center sm:text-left">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" stroke="currentColor" class="bi bi-braces  mr-2 text-green-400" >
+  <path d="M2.114 8.063V7.9c1.005-.102 1.497-.615 1.497-1.6V4.503c0-1.094.39-1.538 1.354-1.538h.273V2h-.376C3.25 2 2.49 2.759 2.49 4.352v1.524c0 1.094-.376 1.456-1.49 1.456v1.299c1.114 0 1.49.362 1.49 1.456v1.524c0 1.593.759 2.352 2.372 2.352h.376v-.964h-.273c-.964 0-1.354-.444-1.354-1.538V9.663c0-.984-.492-1.497-1.497-1.6M13.886 7.9v.163c-1.005.103-1.497.616-1.497 1.6v1.798c0 1.094-.39 1.538-1.354 1.538h-.273v.964h.376c1.613 0 2.372-.759 2.372-2.352v-1.524c0-1.094.376-1.456 1.49-1.456V7.332c-1.114 0-1.49-.362-1.49-1.456V4.352C13.51 2.759 12.75 2 11.138 2h-.376v.964h.273c.964 0 1.354.444 1.354 1.538V6.3c0 .984.492 1.497 1.497 1.6"/>
+</svg>
+                    JSON Output
+                </div>
+            </div>
+            
+            <!-- Editors Container -->
+            <div class="editors-container">
+                <!-- Left Editor -->
+                <div class="md:w-1/2 border-b md:border-b-0 md:border-r border-slate-700 relative">
+                    <div class="absolute top-4 right-4 z-10 flex">
+                        <div class="dropdown relative">
+                            <button id="examples-dropdown" class="rounded-full px-3 py-1 bg-indigo-500 bg-opacity-20 border border-indigo-500 border-opacity-30 text-xs text-indigo-300 flex items-center hover-lift">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                Examples
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div id="samples-menu" class="hidden absolute top-8 left-0 bg-slate-800 border border-slate-700 rounded-lg shadow-xl w-48 p-2 z-20 dropdown-reveal">
+                                <div id="userSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">User Example</div>
+                                <div id="productSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">Product Example</div>
+                                <div id="addressSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">Address Example</div>
+                                <div id="complexSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">Complex Example</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="editor-container" id="javaEditor"></div>
+                </div>
+                
+                <!-- Right Editor -->
+                <div class="md:w-1/2 relative">
+                    <div class="absolute top-4 right-4 z-10">
+                        <button id="convertButton" class="button-primary text-white text-sm px-4 py-2 rounded-lg shadow-lg flex items-center space-x-2 action-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                            </svg>
+                            <span>Convert</span>
+                        </button>
+                    </div>
+                    <div class="editor-container" id="jsonEditor"></div>
+                    
+                    <!-- Copy Button -->
+                    <div class="absolute bottom-4 right-4">
+                        <button id="copyButton" class="button-secondary text-white font-medium py-2 px-4 rounded-lg shadow-lg flex items-center space-x-2 action-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                            </svg>
+                            <span class="hidden sm:inline">Copy as JSON</span>
+                            <span class="sm:hidden">Copy</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="mt-10 sm:mt-16 border-t border-slate-800 pt-6 sm:pt-8 pb-12 sm:pb-16">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex">
+                    <a href="https://github.com/sarkarshuvojit/lomboktojson-web" class="text-slate-400 hover:text-indigo-300 transition footer-link" target="_blank">GitHub</a>
+                </div>
+                <div class="text-slate-500 text-sm">
+                    Built with regret of using Lombok's toString to log.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="./assets/wasm_exec.js"></script>
+    <script>
+        const go = new Go();
+        WebAssembly
+            .instantiateStreaming(fetch("assets/lombok2json.wasm"), go.importObject)
+            .then(result => {
+                go.run(result.instance);
+            });
+    </script>
+    <script src="./assets/app.js"> </script>
+</body>
+</html>
