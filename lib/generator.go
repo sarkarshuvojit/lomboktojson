@@ -69,7 +69,6 @@ func Generate(tokens []types.Token) ([]byte, error) {
 		buf.WriteString("{}")
 	}
 	asBytes := buf.Bytes()
-	fmt.Println(string(asBytes))
 	return asBytes, nil
 }
 
