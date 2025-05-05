@@ -24,7 +24,7 @@ func Test_ScanNestedCustomerWithArraysLombokStyle(t *testing.T) {
     t.Run("Nested Customer with Arrays (Lombok Style): Token Length & Lexemes", func(t *testing.T) {
         var sourceBuf bytes.Buffer
         sourceBuf.WriteString(source)
-        scanner := lib.NewScanner(&sourceBuf)
+        scanner := NewScanner(&sourceBuf)
         tokens := scanner.Scan()
 
         expectedTokenLen := 71
@@ -63,7 +63,7 @@ func Test_ScanNestedCustomerWithArraysLombokStyle(t *testing.T) {
     t.Run("Nested Customer with Arrays (Lombok Style): Token Types", func(t *testing.T) {
         var sourceBuf bytes.Buffer
         sourceBuf.WriteString(source)
-        scanner := lib.NewScanner(&sourceBuf)
+        scanner := NewScanner(&sourceBuf)
         tokens := scanner.Scan()
 
         expectedTokenLen := 71
