@@ -48,6 +48,12 @@ var tokenConverterMapping map[types.TokenType]TokenConverter = map[types.TokenTy
 	types.PAREN_CLOSE: func(i int, t []types.Token) ([]byte, bool) {
 		return []byte(`}`), true
 	},
+	types.ARRAY_OPEN: func(i int, t []types.Token) ([]byte, bool) {
+		return []byte(`[`), true
+	},
+	types.ARRAY_CLOSE: func(i int, t []types.Token) ([]byte, bool) {
+		return []byte(`]`), true
+	},
 
 }
 

@@ -73,7 +73,6 @@ func TestConvert(t *testing.T) {
 			},
 			expected: `{"name":"John","address":{"street":"123 Main St"}}`,
 		},
-		/*
 		{
 			name: "Array of simple values",
 			tokens: []types.Token{
@@ -93,6 +92,7 @@ func TestConvert(t *testing.T) {
 			},
 			expected: `{"scores":["90","85","95"]}`,
 		},
+		/*
 		{
 			name: "Array of objects",
 			tokens: []types.Token{
