@@ -7,53 +7,72 @@ import (
 	"github.com/sarkarshuvojit/lomboktojson/types"
 )
 
-type TokenConverter func (types.Token) ([]byte, bool)
+type TokenConverter func (int, []types.Token) ([]byte, bool)
 
 func getOptionallyQuotedValue(val string) string {
 	return fmt.Sprintf("\"%s\"", val)
 }
 
 var tokenConverterMapping map[types.TokenType]TokenConverter = map[types.TokenType]TokenConverter{
-	types.EOF: func(t types.Token) ([]byte, bool) {
+	types.EOF: func(i int, ts []types.Token) ([]byte, bool) {
 		return []byte(``), false
 	},
-	types.CLASS_NAME: func(t types.Token) ([]byte, bool) {
+	types.CLASS_NAME: func(i int, ts []types.Token) ([]byte, bool) {
 		return []byte(``), false
 	},
-	types.KEY: func(t types.Token) ([]byte, bool) {
+	types.KEY: func(i int, ts []types.Token) ([]byte, bool) {
+		t := ts[i]
 		return []byte(getOptionallyQuotedValue(t.Lexeme)), true
 	},
-	types.VALUE: func(t types.Token) ([]byte, bool) {
+	types.VALUE: func(i int, ts []types.Token) ([]byte, bool) {
+		t := ts[i]
 		return []byte(getOptionallyQuotedValue(t.Lexeme)), true
 	},
-	types.EQUALS: func(t types.Token) ([]byte, bool) {
+	types.EQUALS: func(i int, ts []types.Token) ([]byte, bool) {
+		// t := ts[i]
 		return []byte(`:`), true
 	},
-	types.COMMA: func(t types.Token) ([]byte, bool) {
+	types.COMMA: func(i int, ts []types.Token) ([]byte, bool) {
+		// t := ts[i]
 		return []byte(`,`), true
+	},
+	types.PAREN_OPEN: func(i int, t []types.Token) ([]byte, bool) {
+		if i == 0 {
+			return []byte(``), false
+		}
+		if t[i-1].Type == types.CLASS_NAME {
+			return []byte(`{`), true
+		}
+		return []byte(``), false
+	},
+	types.PAREN_CLOSE: func(i int, t []types.Token) ([]byte, bool) {
+		return []byte(`}`), true
 	},
 
 }
 
 func Convert(tokens []types.Token) ([]byte, error) {
 	var buf bytes.Buffer
-	buf.WriteByte('{')
-	for _, token := range tokens {
-		if tknBytes, present := convertToken(token); present {
+	for i := range tokens {
+		if tknBytes, present := convertTokenAt(i, tokens); present {
 			buf.Write(tknBytes)
 		}
 	}
 
-	buf.WriteByte('}')
+	if buf.Len() == 0 {
+		buf.WriteString("{}")
+	}
 	asBytes := buf.Bytes()
 	fmt.Println(string(asBytes))
 	return asBytes, nil
 }
 
-func convertToken(token types.Token) ([]byte, bool) {
+func convertTokenAt(i int, tokens []types.Token) ([]byte, bool) {
+	token := tokens[i]
 	if converterFn, ok := tokenConverterMapping[token.Type]; ok {
-		return converterFn(token)
+		return converterFn(i, tokens)
 	} else {
 		return []byte(``), false
 	}
+	
 }

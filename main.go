@@ -14,5 +14,7 @@ func main() {
 
 	scanner := lib.NewScanner(&sourceBuf)
 	tokens := scanner.Scan()
-	fmt.Println(tokens)
+	if val, err := (lib.Convert(tokens)); err != nil {
+		fmt.Println(string(val))
+	}
 }
