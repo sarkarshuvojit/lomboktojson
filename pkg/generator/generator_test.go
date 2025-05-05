@@ -48,7 +48,7 @@ func TestGenerate(t *testing.T) {
 				{Type: types.PAREN_CLOSE},
 				{Type: types.EOF},
 			},
-			expected: `{"name":"John","age":"30"}`,
+			expected: `{"name":"John","age":30}`,
 		},
 		{
 			name: "Nested object",
@@ -88,7 +88,7 @@ func TestGenerate(t *testing.T) {
 				{Type: types.PAREN_CLOSE},
 				{Type: types.EOF},
 			},
-			expected: `{"scores":["90","85","95"]}`,
+			expected: `{"scores":[90,85,95]}`,
 		},
 		{
 			name: "Array of objects",
