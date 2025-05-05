@@ -3,13 +3,23 @@ package generator
 import (
 	"bytes"
 	"fmt"
+	"regexp"
 
 	"github.com/sarkarshuvojit/lomboktojson/types"
 )
 
 type singleTokenToJson func (int, []types.Token) ([]byte, bool)
 
+func isNumeric(s string) bool {
+	re := regexp.MustCompile(`^\d+$`)
+	return re.MatchString(s)
+}
+
+
 func getOptionallyQuotedValue(val string) string {
+	if isNumeric(val) {
+		return fmt.Sprintf("%s", val)
+	}
 	return fmt.Sprintf("\"%s\"", val)
 }
 
