@@ -18,11 +18,12 @@ go install github.com/sarkarshuvojit/lomboktojson@latest
 ### As a Go Package
 
 ```go
-import "github.com/sarkarshuvojit/lomboktojson"
+l2j "github.com/sarkarshuvojit/lomboktojson/pkg"
+
 
 // Convert a Lombok toString string to JSON
 lombokStr := "Customer(name=Raju,email=raju@gmail.com,age=15)"
-jsonStr, err := lombokToJson.Convert(lombokStr)
+jsonStr, err := l2j.LombokToJson(lombokStr)
 
 // Result: {"name":"Raju","email":"raju@gmail.com","age":15}
 ```

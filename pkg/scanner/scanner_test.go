@@ -1,10 +1,9 @@
-package lib_test
+package scanner
 
 import (
 	"bytes"
 	"testing"
 
-	"github.com/sarkarshuvojit/lomboktojson/lib"
 	"github.com/sarkarshuvojit/lomboktojson/types"
 )
 
@@ -14,7 +13,7 @@ func Test_ScanSimple(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
 
-		scanner := lib.NewScanner(&sourceBuf)
+		scanner := NewScanner(&sourceBuf)
 		tokens := scanner.Scan()
 
 		expectedTokenLen := 1
@@ -31,7 +30,7 @@ func Test_ScanSimple(t *testing.T) {
 		source := `Customer()`
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
-		scanner := lib.NewScanner(&sourceBuf)
+		scanner := NewScanner(&sourceBuf)
 		tokens := scanner.Scan()
 
 		expectedTokenLen := 4
@@ -51,7 +50,7 @@ func Test_ScanTheCustomer(t *testing.T) {
 		source := `Customer(name=Rajesh Kumar)`
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
-		scanner := lib.NewScanner(&sourceBuf)
+		scanner := NewScanner(&sourceBuf)
 		tokens := scanner.Scan()
 
 		expectedTokenLen := 7
@@ -73,7 +72,7 @@ func Test_ScanTheCustomer(t *testing.T) {
 		source := `Customer(name=Rajesh Kumar)`
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
-		scanner := lib.NewScanner(&sourceBuf)
+		scanner := NewScanner(&sourceBuf)
 		tokens := scanner.Scan()
 
 		// Customer | ParenOpen | Key | EQUALS | Value | PAREN_CLOSE | EOF
@@ -101,7 +100,7 @@ func Test_ScanTheCustomerWithMultipleFieldsFlat(t *testing.T) {
 	t.Run("Customer(name, age, email): TokenLengh & Lexemes", func(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
-		scanner := lib.NewScanner(&sourceBuf)
+		scanner := NewScanner(&sourceBuf)
 		tokens := scanner.Scan()
 
 		expectedTokenLen := 15
@@ -127,7 +126,7 @@ func Test_ScanTheCustomerWithMultipleFieldsFlat(t *testing.T) {
 	t.Run("Customer(name, age, email): TokenTypes", func(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
-		scanner := lib.NewScanner(&sourceBuf)
+		scanner := NewScanner(&sourceBuf)
 		tokens := scanner.Scan()
 
 		expectedTokenTypes := [15]types.TokenType{
@@ -154,7 +153,7 @@ func Test_ScanTheCustomerWithMultipleFieldsNested(t *testing.T) {
 	t.Run("Customer(name, age, email): TokenLengh & Lexemes", func(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
-		scanner := lib.NewScanner(&sourceBuf)
+		scanner := NewScanner(&sourceBuf)
 		tokens := scanner.Scan()
 
 		expectedTokenLen := 15
@@ -180,7 +179,7 @@ func Test_ScanTheCustomerWithMultipleFieldsNested(t *testing.T) {
 	t.Run("Customer(name, age, email): TokenTypes", func(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
-		scanner := lib.NewScanner(&sourceBuf)
+		scanner := NewScanner(&sourceBuf)
 		tokens := scanner.Scan()
 
 		expectedTokenTypes := [15]types.TokenType{
@@ -207,7 +206,7 @@ func Test_ScanTheCustomerWithArrayField(t *testing.T) {
 	t.Run("Customer(name, phones[]): TokenLengh & Lexemes", func(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
-		scanner := lib.NewScanner(&sourceBuf)
+		scanner := NewScanner(&sourceBuf)
 		tokens := scanner.Scan()
 
 		expectedTokenLen := 15
@@ -233,7 +232,7 @@ func Test_ScanTheCustomerWithArrayField(t *testing.T) {
 	t.Run("Customer(name, phones[]): TokenTypes", func(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
-		scanner := lib.NewScanner(&sourceBuf)
+		scanner := NewScanner(&sourceBuf)
 		tokens := scanner.Scan()
 
 		expectedTokenLen := 15
