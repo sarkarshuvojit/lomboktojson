@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConvert(t *testing.T) {
+func TestGenerate(t *testing.T) {
 	tests := []struct {
 		name     string
 		tokens   []types.Token
@@ -54,8 +54,7 @@ func TestConvert(t *testing.T) {
 		{
 			name: "Nested object",
 			tokens: []types.Token{
-				{Type: types.CLASS_NAME, Lexeme: "Person"},
-				{Type: types.PAREN_OPEN},
+				{Type: types.CLASS_NAME, Lexeme: "Person"}, {Type: types.PAREN_OPEN},
 				{Type: types.KEY, Lexeme: "name"},
 				{Type: types.EQUALS},
 				{Type: types.VALUE, Lexeme: "John"},
@@ -123,7 +122,7 @@ func TestConvert(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, _ := lib.Convert(tt.tokens)
+			result, _ := lib.Generate(tt.tokens)
 			assert.JSONEq(t, tt.expected, string(result))
 		})
 	}

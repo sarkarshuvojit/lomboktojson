@@ -7,13 +7,13 @@ import (
 	"github.com/sarkarshuvojit/lomboktojson/types"
 )
 
-type TokenConverter func (int, []types.Token) ([]byte, bool)
+type SingleTokenToJson func (int, []types.Token) ([]byte, bool)
 
 func getOptionallyQuotedValue(val string) string {
 	return fmt.Sprintf("\"%s\"", val)
 }
 
-var tokenConverterMapping map[types.TokenType]TokenConverter = map[types.TokenType]TokenConverter{
+var tokenTypeGeneratorMapping map[types.TokenType]SingleTokenToJson = map[types.TokenType]SingleTokenToJson{
 	types.EOF: func(i int, ts []types.Token) ([]byte, bool) {
 		return []byte(``), false
 	},
@@ -57,10 +57,10 @@ var tokenConverterMapping map[types.TokenType]TokenConverter = map[types.TokenTy
 
 }
 
-func Convert(tokens []types.Token) ([]byte, error) {
+func Generate(tokens []types.Token) ([]byte, error) {
 	var buf bytes.Buffer
 	for i := range tokens {
-		if tknBytes, present := convertTokenAt(i, tokens); present {
+		if tknBytes, present := generateTokenAt(i, tokens); present {
 			buf.Write(tknBytes)
 		}
 	}
@@ -73,9 +73,9 @@ func Convert(tokens []types.Token) ([]byte, error) {
 	return asBytes, nil
 }
 
-func convertTokenAt(i int, tokens []types.Token) ([]byte, bool) {
+func generateTokenAt(i int, tokens []types.Token) ([]byte, bool) {
 	token := tokens[i]
-	if converterFn, ok := tokenConverterMapping[token.Type]; ok {
+	if converterFn, ok := tokenTypeGeneratorMapping[token.Type]; ok {
 		return converterFn(i, tokens)
 	} else {
 		return []byte(``), false
