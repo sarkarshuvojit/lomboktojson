@@ -61,5 +61,5 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error reading input: %v\n", err)
 		os.Exit(1)
 	}
-	fmt.Print(output)
+	fmt.Print(*output)
 }
