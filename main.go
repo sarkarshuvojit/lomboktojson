@@ -2,13 +2,12 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"flag"
 	"fmt"
 	"io"
 	"os"
 
-	"github.com/sarkarshuvojit/lomboktojson/pkg"
+	l2j "github.com/sarkarshuvojit/lomboktojson/pkg"
 )
 
 
@@ -57,7 +56,7 @@ func main() {
 	}
 
 	// Process the input
-	output, err := pkg.LombokToJson(input)
+	output, err := l2j.LombokToJson(input)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error reading input: %v\n", err)
 		os.Exit(1)

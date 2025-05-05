@@ -1,4 +1,4 @@
-package lib
+package generator
 
 import (
 	"bytes"
@@ -7,13 +7,13 @@ import (
 	"github.com/sarkarshuvojit/lomboktojson/types"
 )
 
-type SingleTokenToJson func (int, []types.Token) ([]byte, bool)
+type singleTokenToJson func (int, []types.Token) ([]byte, bool)
 
 func getOptionallyQuotedValue(val string) string {
 	return fmt.Sprintf("\"%s\"", val)
 }
 
-var tokenTypeGeneratorMapping map[types.TokenType]SingleTokenToJson = map[types.TokenType]SingleTokenToJson{
+var tokenTypeGeneratorMapping map[types.TokenType]singleTokenToJson = map[types.TokenType]singleTokenToJson{
 	types.EOF: func(i int, ts []types.Token) ([]byte, bool) {
 		return []byte(``), false
 	},

@@ -1,11 +1,10 @@
-package lib_test
+package scanner
 
 import (
 	"bytes"
 	"fmt"
 	"testing"
 
-	"github.com/sarkarshuvojit/lomboktojson/lib"
 	"github.com/sarkarshuvojit/lomboktojson/types"
 )
 
