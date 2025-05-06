@@ -32,10 +32,35 @@ require(['vs/editor/editor.main'], function() {
 
   // Sample code
   const sampleCodes = {
-    user: `User(name=Alice, age=30, active=true)`,
-    product: `Product(id=102, name=Laptop, price=999.99, inStock=true)`,
-    address: `Address(street=123 Elm St, city=Springfield, zip=12345)`,
-    complex: `Order(id=5001, user=User(name=Alice, age=30, active=true), items=[Product(id=102, name=Laptop, price=999.99, inStock=true), Product(id=205, name=Mouse, price=19.99, inStock=false)], total=1019.98)`
+    user: `User(
+      name=Alice, 
+      age=30, 
+      active=true
+)`,
+    product: `Product(
+      id=102, 
+      name=Laptop, 
+      price=999.99, 
+      inStock=true
+)`,
+    address: `Address(
+      street=123 Elm St, 
+      city=Springfield, 
+      zip=12345
+)`,
+    complex: `Order(
+    id=5001, 
+    user=User(
+        name=Alice, 
+        age=30, 
+        active=true
+    ), 
+    items=[
+        Product(id=102, name=Laptop, price=999.99, inStock=true), 
+        Product(id=205, name=Mouse, price=19.99, inStock=false)
+    ], 
+    total=1019.98
+)`
   };
 
   // Initialize Java editor
