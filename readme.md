@@ -62,6 +62,13 @@ cat lombok-output.log | l2j > $(dirseq)-customer-records.json
 # Creates: 1-customer-records.json with the JSON result
 ```
 
+#### 4. Convert a file line by line from Lombok to Json into a diff file
+
+```bash
+$ cat lombokobjects.txt |  xargs -L1 echo | l2j |sed 's/}/}\n/g' > $(dirseq)-jsonobjects.txt
+# Reads line by line from a file containing lot of json objects 
+```
+
 #### Example Workflow
 
 ```bash
