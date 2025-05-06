@@ -8,6 +8,13 @@ import (
 	"github.com/sarkarshuvojit/lomboktojson/pkg/scanner"
 )
 
+// LombokToJson converts the output of Lombok's default toString() method
+// into a well-structured JSON string.
+//
+// This utility is helpful when dealing with logs or outputs that include
+// Lombok-formatted toString() results, making them easier to parse or process.
+//
+// Returns a pointer to a JSON string on success, or an error if conversion fails.
 func LombokToJson(in string) (*string, error) {
 	var sourceBuf bytes.Buffer
 	sourceBuf.WriteString(in)

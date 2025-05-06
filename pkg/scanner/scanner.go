@@ -110,6 +110,11 @@ func (s *Scanner) clearStringLiterals() {
 	}
 }
 
+// Scan processes the input source and returns a slice of tokens.
+//
+// It walks through the byte stream, identifies literals, delimiters,
+// and structural characters, and builds a tokenized representation
+// of the Lombok-formatted string.
 func (s *Scanner) Scan() []types.Token {
 
 	for chIdx := range s.sourceBytes {

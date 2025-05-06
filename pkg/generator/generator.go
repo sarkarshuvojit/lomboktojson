@@ -76,6 +76,12 @@ var tokenTypeGeneratorMapping map[types.TokenType]singleTokenToJson = map[types.
 
 }
 
+// Generate converts a sequence of parsed tokens into a JSON-formatted byte slice.
+//
+// It iterates through the provided tokens and builds a JSON object based on
+// recognized key-value patterns or structured groupings.
+//
+// Returns a JSON byte slice on success, or an empty JSON object ("{}") if no valid tokens are found.
 func Generate(tokens []types.Token) ([]byte, error) {
 	var buf bytes.Buffer
 	for i := range tokens {
