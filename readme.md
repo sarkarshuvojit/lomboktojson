@@ -66,7 +66,7 @@ cat lombok-output.log | l2j > $(dirseq)-customer-records.json
 
 ```bash
 $ cat lombokobjects.txt |  xargs -L1 echo | l2j |sed 's/}/}\n/g' > $(dirseq)-jsonobjects.txt
-# Reads line by line from a file containing lot of json objects 
+# Reads line by line from a file containing lombok object in each line creating another file with same number of lines containing the json equivalent.
 ```
 
 #### Example Workflow
