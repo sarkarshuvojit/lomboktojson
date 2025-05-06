@@ -3,6 +3,10 @@
 A lightweight utility that converts Lombok's default `toString()` output format to standard JSON format.
 
 [![Run tests](https://github.com/sarkarshuvojit/lomboktojson/actions/workflows/go-run-tests.yml/badge.svg?branch=main)](https://github.com/sarkarshuvojit/lomboktojson/actions/workflows/go-run-tests.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/sarkarshuvojit/lomboktojson.svg)](https://pkg.go.dev/github.com/sarkarshuvojit/lomboktojson)
+[![Static Badge](https://img.shields.io/badge/Try%20it%20out-Website-blue)](https://shuvojit.dev/lomboktojson)
+
+
 
 ![Conversion Example](docs/assets/high-level-idea-clear.png)
 
