@@ -210,13 +210,20 @@
         .footer-link:hover::after {
             width: 100%;
         }
+
+		textarea.iPadShowKeyboard {
+			display: none !important;
+		}
     </style>
+
 </head>
 <body class="min-h-screen relative overflow-x-hidden">
     <!-- Background gradients -->
+	<!--
     <div class="glow-effect bg-indigo-600" style="width:600px; height:600px; top:-300px; right:-300px;"></div>
     <div class="glow-effect bg-green-500" style="width:500px; height:500px; bottom:-200px; left:-200px;"></div>
     <div class="glow-effect bg-purple-600" style="width:400px; height:400px; top:30%; left:50%; transform:translateX(-50%);"></div>
+	-->
     
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 max-w-7xl relative z-10">
         <!-- Header -->
@@ -227,19 +234,19 @@
                 </svg>
                 <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold header-gradient tracking-tight">LombokToJson</h1>
             </div>
-            <div class="flex items-center justify-center mt-4 sm:mt-6 space-x-4">
-                <div class="flex items-center bg-indigo-900 bg-opacity-30 px-3 py-1 rounded-full">
-                    <div class="h-2 w-2 rounded-full bg-gray-400 mr-2"></div>
-                    <span class="text-gray-400 text-sm">Offline</span>
-                </div>
-                <div class="text-slate-400 text-sm flex items-center">
-<svg class="w-6 h-6 text-white-600 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 14v3m-3-6V7a3 3 0 1 1 6 0v4m-8 0h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/>
-</svg>
+			<div class="flex flex-col sm:flex-row items-center justify-center mt-4 sm:mt-6 space-y-4 sm:space-y-0 sm:space-x-4">
+				<div class="flex items-center bg-indigo-900 bg-opacity-30 px-3 py-1 rounded-full">
+					<div class="h-2 w-2 rounded-full bg-gray-400 mr-2"></div>
+					<span class="text-gray-400 text-sm">Offline</span>
+				</div>
+				<div class="text-slate-400 text-sm flex items-center">
+					<svg class="w-6 h-6 text-white-600 dark:text-white mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+						<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 14v3m-3-6V7a3 3 0 1 1 6 0v4m-8 0h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/>
+					</svg>
+					<span>No data leaves your browser. Thanks to wasm!</span>
+				</div>
+			</div>
 
-                    <span>No data leaves your browser. Thanks to wasm!</span>
-                </div>
-            </div>
         </header>
 
         <!-- Editor Area -->
@@ -266,7 +273,15 @@
             <div class="editors-container">
                 <!-- Left Editor -->
                 <div class="md:w-1/2 border-b md:border-b-0 md:border-r border-slate-700 relative">
-                    <div class="absolute top-4 right-4 z-10 flex">
+                    <div class="absolute bottom-4 right-4 z-10">
+                        <button id="convertButton" class="rounded-full px-3 py-1 bg-indigo-500 bg-opacity-20 border border-indigo-500 border-opacity-30 text-xs text-indigo-300 flex items-center hover-lift">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                            </svg>
+                            <span>Convert</span>
+                        </button>
+                    </div>
+                    <div class="absolute top-8 right-4 z-10 flex">
                         <div class="dropdown relative">
                             <button id="examples-dropdown" class="rounded-full px-3 py-1 bg-indigo-500 bg-opacity-20 border border-indigo-500 border-opacity-30 text-xs text-indigo-300 flex items-center hover-lift">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -278,11 +293,11 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
-                            <div id="samples-menu" class="hidden absolute top-8 left-0 bg-slate-800 border border-slate-700 rounded-lg shadow-xl w-48 p-2 z-20 dropdown-reveal">
-                                <div id="userSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">User Example</div>
-                                <div id="productSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">Product Example</div>
-                                <div id="addressSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">Address Example</div>
-                                <div id="complexSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">Complex Example</div>
+                            <div id="samples-menu" class="hidden absolute top-8 left-0 bg-gray-800 border border-slate-700 rounded-lg shadow-xl p-2 z-20 dropdown-reveal">
+                                <div id="userSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">User</div>
+                                <div id="productSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">Product</div>
+                                <div id="addressSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">Address</div>
+                                <div id="complexSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">Nested</div>
                             </div>
                         </div>
                     </div>
@@ -291,24 +306,15 @@
                 
                 <!-- Right Editor -->
                 <div class="md:w-1/2 relative">
-                    <div class="absolute top-4 right-4 z-10">
-                        <button id="convertButton" class="button-primary text-white text-sm px-4 py-2 rounded-lg shadow-lg flex items-center space-x-2 action-button">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                            </svg>
-                            <span>Convert</span>
-                        </button>
-                    </div>
                     <div class="editor-container" id="jsonEditor"></div>
                     
                     <!-- Copy Button -->
                     <div class="absolute bottom-4 right-4">
-                        <button id="copyButton" class="button-secondary text-white font-medium py-2 px-4 rounded-lg shadow-lg flex items-center space-x-2 action-button">
+                        <button id="copyButton" class="rounded-full px-3 py-1 bg-indigo-500 bg-opacity-20 border border-indigo-500 border-opacity-30 text-xs text-indigo-300 flex items-center hover-lift">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                             </svg>
-                            <span class="hidden sm:inline">Copy as JSON</span>
-                            <span class="sm:hidden">Copy</span>
+                            <span>Copy</span>
                         </button>
                     </div>
                 </div>
