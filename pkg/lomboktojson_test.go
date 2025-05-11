@@ -18,23 +18,23 @@ func TestLombokToJson_NestedValidInputs(t *testing.T) {
 		expected string
 	}{
 		{
-			name:  "Flat structure",
-			input: "Customer(name=Raju,email=raju@gmail.com,age=15)",
+			name:     "Flat structure",
+			input:    "Customer(name=Raju,email=raju@gmail.com,age=15)",
 			expected: `{"name":"Raju","email":"raju@gmail.com","age":15}`,
 		},
 		{
-			name:  "Nested object",
-			input: "Order(id=123,customer=Customer(name=Raju,email=raju@gmail.com,age=15),amount=500.0)",
+			name:     "Nested object",
+			input:    "Order(id=123,customer=Customer(name=Raju,email=raju@gmail.com,age=15),amount=500.0)",
 			expected: `{"id":123,"customer":{"name":"Raju","email":"raju@gmail.com","age":15},"amount":500.0}`,
 		},
 		{
-			name:  "Nested with multiple objects",
-			input: "Response(status=200,body=Order(id=123,customer=Customer(name=Raju,email=raju@gmail.com),amount=500.0),success=true)",
+			name:     "Nested with multiple objects",
+			input:    "Response(status=200,body=Order(id=123,customer=Customer(name=Raju,email=raju@gmail.com),amount=500.0),success=true)",
 			expected: `{"status":200,"body":{"id":123,"customer":{"name":"Raju","email":"raju@gmail.com"},"amount":500.0},"success":true}`,
 		},
 		{
-			name:  "Deeply nested",
-			input: "Wrapper(data=Response(status=200,body=Order(id=123,customer=Customer(name=Raju),amount=500.0)))",
+			name:     "Deeply nested",
+			input:    "Wrapper(data=Response(status=200,body=Order(id=123,customer=Customer(name=Raju),amount=500.0)))",
 			expected: `{"data":{"status":200,"body":{"id":123,"customer":{"name":"Raju"},"amount":500.0}}}`,
 		},
 	}
@@ -55,4 +55,3 @@ func TestLombokToJson_NestedValidInputs(t *testing.T) {
 		})
 	}
 }
-

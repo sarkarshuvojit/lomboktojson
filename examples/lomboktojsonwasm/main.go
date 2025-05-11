@@ -30,4 +30,3 @@ func main() {
 	registerCallbacks()
 	<-c
 }
-

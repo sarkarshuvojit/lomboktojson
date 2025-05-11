@@ -10,8 +10,6 @@ import (
 	l2j "github.com/sarkarshuvojit/lomboktojson/pkg"
 )
 
-
-
 func main() {
 	// Define command-line flags
 	inputFile := flag.String("i", "", "Input file (optional)")

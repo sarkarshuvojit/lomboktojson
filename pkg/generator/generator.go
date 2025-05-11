@@ -8,7 +8,7 @@ import (
 	"github.com/sarkarshuvojit/lomboktojson/types"
 )
 
-type singleTokenToJson func (int, []types.Token) ([]byte, bool)
+type singleTokenToJson func(int, []types.Token) ([]byte, bool)
 
 func isNumeric(s string) bool {
 	re := regexp.MustCompile(`^\d+$`)
@@ -22,7 +22,7 @@ func isFloatingPoint(s string) bool {
 
 func getOptionallyQuotedValue(val string) string {
 	isNull := val == "null"
-	isBool := val == "true" || val == "false" 
+	isBool := val == "true" || val == "false"
 	isNum := isNumeric(val)
 	isFloat := isFloatingPoint(val)
 
@@ -73,7 +73,6 @@ var tokenTypeGeneratorMapping map[types.TokenType]singleTokenToJson = map[types.
 	types.ARRAY_CLOSE: func(i int, t []types.Token) ([]byte, bool) {
 		return []byte(`]`), true
 	},
-
 }
 
 // Generate converts a sequence of parsed tokens into a JSON-formatted byte slice.
@@ -104,5 +103,5 @@ func generateTokenAt(i int, tokens []types.Token) ([]byte, bool) {
 	} else {
 		return []byte(``), false
 	}
-	
+
 }
