@@ -14,10 +14,12 @@ func tabs(indent int, curtab int) string {
 	return s
 }
 
-func shouldIndent(token types.Token) bool {
+func shouldIndent(token types.Token, isArrOpen bool) bool {
+	if token.Type == types.VALUE && isArrOpen {
+		return true
+	}
 	return !(token.Type == types.EQUALS || token.Type == types.VALUE ||
-		token.Type == types.ARRAY_OPEN || token.Type == types.ARRAY_CLOSE ||
-		token.Type == types.PAREN_OPEN || // token.Type == types.PAREN_CLOSE ||
+		token.Type == types.ARRAY_OPEN || token.Type == types.PAREN_OPEN ||
 		token.Type == types.COMMA || token.Type == types.CLASS_NAME)
 }
 
@@ -55,13 +57,22 @@ func shouldDecreaseIndent(token types.Token) bool {
 func Beautify(tokens []types.Token, indent int) (asBytes []byte, err error) {
 	var buf bytes.Buffer
 	curTab := 0
+	isArrOpen := false
 	for i := range tokens {
 		token := tokens[i]
+
+		if token.Type == types.VALUE && tokens[i-1].Type == types.ARRAY_OPEN {
+			isArrOpen = true
+		}
+		if token.Type == types.ARRAY_CLOSE {
+			isArrOpen = false
+		}
+
 		if shouldDecreaseIndent(token) {
 			curTab--
 		}
 
-		if shouldIndent(token) {
+		if shouldIndent(token, isArrOpen) {
 			buf.WriteString(tabs(indent, curTab))
 		}
 

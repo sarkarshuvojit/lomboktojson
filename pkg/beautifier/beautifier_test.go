@@ -109,8 +109,8 @@ func TestBeautify(t *testing.T) {
 			expected: `Person(
   scores=[
     90,
-	85,
-	95
+    85,
+    95
   ]
 )`,
 		},
