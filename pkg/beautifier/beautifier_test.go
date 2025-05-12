@@ -55,10 +55,10 @@ func TestBeautify(t *testing.T) {
 				{Type: types.PAREN_CLOSE, Lexeme: ")"},
 				{Type: types.EOF},
 			},
-			indent:   2,
-			skipTest: true,
+			indent: 2,
 			expected: `Person(
-  name=John,\n  age=30
+  name=John,
+  age=30
 )`,
 		},
 		{
@@ -80,10 +80,10 @@ func TestBeautify(t *testing.T) {
 				{Type: types.PAREN_CLOSE, Lexeme: ")"},
 				{Type: types.EOF},
 			},
-			indent:   2,
-			skipTest: true,
+			indent: 2,
 			expected: `Person(
-  name=John,\n  address=Address(
+  name=John,
+  address=Address(
     street=123 Main St
   )
 )`,
@@ -105,11 +105,12 @@ func TestBeautify(t *testing.T) {
 				{Type: types.PAREN_CLOSE, Lexeme: ")"},
 				{Type: types.EOF},
 			},
-			indent:   2,
-			skipTest: true,
+			indent: 2,
 			expected: `Person(
   scores=[
-    90,\n    85,\n    95
+    90,
+	85,
+	95
   ]
 )`,
 		},

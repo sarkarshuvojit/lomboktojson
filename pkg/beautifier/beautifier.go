@@ -17,7 +17,8 @@ func tabs(indent int, curtab int) string {
 func shouldIndent(token types.Token) bool {
 	return !(token.Type == types.EQUALS || token.Type == types.VALUE ||
 		token.Type == types.ARRAY_OPEN || token.Type == types.ARRAY_CLOSE ||
-		token.Type == types.PAREN_OPEN || token.Type == types.PAREN_CLOSE)
+		token.Type == types.PAREN_OPEN || token.Type == types.PAREN_CLOSE ||
+		token.Type == types.COMMA || token.Type == types.CLASS_NAME)
 }
 
 func shouldPrintNewLineAfter(tokens []types.Token, i int) bool {
