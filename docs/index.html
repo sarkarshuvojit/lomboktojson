@@ -36,198 +36,325 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.0/min/vs/loader.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-light: #818cf8;
-            --primary-dark: #4338ca;
-            --secondary: #10b981;
-            --background: #0f172a;
-            --surface-1: #1e293b;
-            --surface-2: #334155;
-            --surface-3: #475569;
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --text-tertiary: #94a3b8;
-            --border: #334155;
+            --primary: #3b82f6;
+            --primary-light: #60a5fa;
+            --primary-dark: #1d4ed8;
+            --accent: #8b5cf6;
+            --accent-light: #a78bfa;
+            --secondary: #06b6d4;
+            --background: #030712;
+            --surface-0: #0c1120;
+            --surface-1: #111827;
+            --surface-2: #1f2937;
+            --surface-3: #374151;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e7eb;
+            --text-tertiary: #9ca3af;
+            --text-muted: #6b7280;
+            --border: #1f2937;
+            --border-light: #374151;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+        }
+        
+        * {
+            box-sizing: border-box;
         }
         
         body {
-            background-color: var(--background);
+            background: linear-gradient(135deg, var(--background) 0%, #0a0f1c 100%);
             color: var(--text-primary);
-            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             overflow-x: hidden;
+            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         .editor-container {
-            height: 450px;
-            border-radius: 0.5rem;
+            height: 500px;
+            border-radius: 0;
             overflow: hidden;
+            background: var(--surface-1);
+            border: 1px solid var(--border);
         }
         
         @media (max-width: 768px) {
             .editor-container {
-                height: 350px;
+                height: 400px;
             }
         }
         
-        .button-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 1;
-            overflow: hidden;
+        .glass-button {
+            background: rgba(59, 130, 246, 0.1);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
         
-        .button-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+        .glass-button:hover {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
         
-        .button-secondary {
-            background: linear-gradient(135deg, var(--secondary), #0d9488);
-            transition: all 0.3s ease;
+        .glass-button-accent {
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
         }
         
-        .button-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        .glass-button-accent:hover {
+            background: rgba(139, 92, 246, 0.15);
+            border-color: rgba(139, 92, 246, 0.3);
         }
         
         .header-gradient {
-            background: linear-gradient(120deg, #4f46e5, #10b981);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 50%, var(--secondary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            font-weight: 800;
+            letter-spacing: -0.025em;
         }
         
-        .glow-effect {
+        .hero-glow {
             position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
+            top: -50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 400px;
+            background: radial-gradient(ellipse, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            pointer-events: none;
             z-index: 0;
-            opacity: 0.4;
         }
         
-        .code-tabs {
-            background-color: var(--surface-1);
-            border-radius: 0.75rem 0.75rem 0 0;
-            overflow: hidden;
+        .status-badge {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            backdrop-filter: blur(8px);
         }
         
-        .code-tab {
+        .privacy-badge {
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            backdrop-filter: blur(8px);
+        }
+        
+        .editor-tabs {
+            background: var(--surface-0);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+        }
+        
+        .editor-tab {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            background: var(--surface-1);
+            border-right: 1px solid var(--border);
+            color: var(--text-tertiary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
             position: relative;
-            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
         
-        .code-tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        .editor-tab:last-child {
+            border-right: none;
+        }
+        
+        .editor-tab.active {
+            background: var(--surface-0);
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--primary);
         }
         
         .editor-wrapper {
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
-            position: relative;
-            border-radius: 1rem;
+            background: var(--surface-0);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             overflow: hidden;
-            max-width: 1400px;
-            margin: 0 auto;
+            position: relative;
+            box-shadow: 
+                0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                0 10px 10px -5px rgba(0, 0, 0, 0.04),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
         }
         
         /* Custom scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
         }
         
         ::-webkit-scrollbar-track {
-            background: var(--surface-1);
+            background: transparent;
         }
         
         ::-webkit-scrollbar-thumb {
             background: var(--surface-3);
-            border-radius: 4px;
+            border-radius: 3px;
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-light);
+            background: var(--primary);
         }
         
-        /* Mobile optimizations */
-        @media (max-width: 768px) {
-            .code-tab {
-                font-size: 0.875rem;
-                padding: 0.75rem 1rem;
-            }
-            
-            .glow-effect {
-                opacity: 0.2;
-                filter: blur(60px);
-            }
+        .floating-button {
+            position: absolute;
+            z-index: 10;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         
-        /* Animation for buttons */
-        .hover-lift {
-            transition: transform 0.2s ease-in-out;
+        .floating-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
         
-        .hover-lift:hover {
-            transform: translateY(-2px);
+        .convert-button {
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(59, 130, 246, 0.9);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: white;
         }
         
-        /* Dropdown animation */
-        .dropdown-reveal {
-            animation: fadeIn 0.2s ease-in-out;
+        .convert-button:hover {
+            background: rgba(59, 130, 246, 1);
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .examples-button {
+            top: 1rem;
+            right: 1rem;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            color: var(--text-secondary);
         }
         
-        /* Improved layout for editors */
+        .copy-button {
+            bottom: 1rem;
+            right: 1rem;
+            background: rgba(16, 185, 129, 0.9);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: white;
+        }
+        
+        .copy-button:hover {
+            background: rgba(16, 185, 129, 1);
+        }
+        
         .editors-container {
             display: flex;
             flex-direction: column;
+            min-height: 500px;
+        }
+        
+        .editor-panel {
+            flex: 1;
+            position: relative;
+            border-right: 1px solid var(--border);
+        }
+        
+        .editor-panel:last-child {
+            border-right: none;
         }
         
         @media (min-width: 768px) {
             .editors-container {
                 flex-direction: row;
             }
+            
+            .editor-panel {
+                border-bottom: none;
+            }
         }
         
-        /* Improved buttons */
-        .action-button {
-            backdrop-filter: blur(4px);
-            font-weight: 500;
+        @media (max-width: 767px) {
+            .editor-panel {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            
+            .hero-glow {
+                width: 400px;
+                height: 200px;
+            }
+            
+            .floating-button {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.75rem;
+            }
         }
         
-        /* Improved footer */
-        .footer-link {
-            transition: all 0.2s ease;
-            position: relative;
-        }
-        
-        .footer-link::after {
-            content: '';
+        /* Dropdown styles */
+        .dropdown-menu {
             position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: var(--primary-light);
-            transition: width 0.3s ease;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            background: var(--surface-1);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 0.5rem;
+            min-width: 160px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(16px);
+            z-index: 50;
+            opacity: 0;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
         }
         
-        .footer-link:hover::after {
-            width: 100%;
+        .dropdown-menu.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+        
+        .dropdown-item {
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            transition: all 0.15s ease;
+        }
+        
+        .dropdown-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--text-primary);
+        }
+        
+        /* Footer improvements */
+        .footer-link {
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        
+        .footer-link:hover {
+            color: var(--primary-light);
+            transform: translateY(-1px);
         }
 
 		textarea.iPadShowKeyboard {
@@ -237,121 +364,121 @@
 
 </head>
 <body class="min-h-screen relative overflow-x-hidden">
-    <!-- Background gradients -->
-	<!--
-    <div class="glow-effect bg-indigo-600" style="width:600px; height:600px; top:-300px; right:-300px;"></div>
-    <div class="glow-effect bg-green-500" style="width:500px; height:500px; bottom:-200px; left:-200px;"></div>
-    <div class="glow-effect bg-purple-600" style="width:400px; height:400px; top:30%; left:50%; transform:translateX(-50%);"></div>
-	-->
+    <!-- Hero glow effect -->
+    <div class="hero-glow"></div>
     
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 max-w-7xl relative z-10">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 max-w-6xl relative z-10">
         <!-- Header -->
-        <header class="text-center mb-8 sm:mb-14">
-            <div class="flex justify-center items-center mb-4 sm:mb-6">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 sm:h-10 sm:w-10 text-indigo-500 mr-3" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-                <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold header-gradient tracking-tight">LombokToJson</h1>
+        <header class="text-center mb-12 sm:mb-16 relative">
+            <div class="flex justify-center items-center mb-6 sm:mb-8">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-blue-500/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 sm:h-10 sm:w-10 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold header-gradient">LombokToJson</h1>
+                </div>
             </div>
-			<div class="flex flex-col sm:flex-row items-center justify-center mt-4 sm:mt-6 space-y-4 sm:space-y-0 sm:space-x-4">
-				<div class="flex items-center bg-indigo-900 bg-opacity-30 px-3 py-1 rounded-full">
-					<div class="h-2 w-2 rounded-full bg-gray-400 mr-2"></div>
-					<span class="text-gray-400 text-sm">Offline</span>
+            <p class="text-lg sm:text-xl text-slate-400 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Transform Lombok @ToString output into structured JSON format with ease. Perfect for debugging, log parsing, and data analysis.
+            </p>
+			<div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+				<div class="status-badge flex items-center px-4 py-2 rounded-full">
+					<div class="h-2 w-2 rounded-full bg-green-400 mr-3 animate-pulse"></div>
+					<span class="text-green-300 text-sm font-medium">Offline Ready</span>
 				</div>
-				<div class="text-slate-400 text-sm flex items-center">
-					<svg class="w-6 h-6 text-white-600 dark:text-white mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-						<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 14v3m-3-6V7a3 3 0 1 1 6 0v4m-8 0h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1Z"/>
+				<div class="privacy-badge flex items-center px-4 py-2 rounded-full">
+					<svg class="w-5 h-5 text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
 					</svg>
-					<span>No data leaves your browser.</span>
+					<span class="text-blue-300 text-sm font-medium">Privacy First</span>
 				</div>
 			</div>
-
         </header>
 
         <!-- Editor Area -->
-        <div class="editor-wrapper mb-10 sm:mb-16">
-            <!-- Code Tabs -->
-            <div class="code-tabs flex bg-slate-800 text-slate-300 w-full">
-                <div class="code-tab active px-4 sm:px-6 py-3 flex items-center font-medium text-white flex-1 text-center sm:text-left">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 mr-2 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="editor-wrapper mb-16">
+            <!-- Editor Tabs -->
+            <div class="editor-tabs">
+                <div class="editor-tab active">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                     </svg>
-                    <span class="hidden xs:inline">Lombok toString</span>
-                    <span class="xs:hidden">Lombok toString</span>
+                    <span>Lombok toString</span>
                 </div>
-                <div class="hidden md:flex w-px bg-slate-700 my-2"></div>
-                <div class="code-tab px-4 sm:px-6 py-3 flex items-center font-medium flex-1 text-center sm:text-left">
-					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" stroke="currentColor" class="bi bi-braces  mr-2 text-green-400" >
-  <path d="M2.114 8.063V7.9c1.005-.102 1.497-.615 1.497-1.6V4.503c0-1.094.39-1.538 1.354-1.538h.273V2h-.376C3.25 2 2.49 2.759 2.49 4.352v1.524c0 1.094-.376 1.456-1.49 1.456v1.299c1.114 0 1.49.362 1.49 1.456v1.524c0 1.593.759 2.352 2.372 2.352h.376v-.964h-.273c-.964 0-1.354-.444-1.354-1.538V9.663c0-.984-.492-1.497-1.497-1.6M13.886 7.9v.163c-1.005.103-1.497.616-1.497 1.6v1.798c0 1.094-.39 1.538-1.354 1.538h-.273v.964h.376c1.613 0 2.372-.759 2.372-2.352v-1.524c0-1.094.376-1.456 1.49-1.456V7.332c-1.114 0-1.49-.362-1.49-1.456V4.352C13.51 2.759 12.75 2 11.138 2h-.376v.964h.273c.964 0 1.354.444 1.354 1.538V6.3c0 .984.492 1.497 1.497 1.6"/>
-</svg>
-                    JSON Output
+                <div class="editor-tab">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-cyan-400" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M2.114 8.063V7.9c1.005-.102 1.497-.615 1.497-1.6V4.503c0-1.094.39-1.538 1.354-1.538h.273V2h-.376C3.25 2 2.49 2.759 2.49 4.352v1.524c0 1.094-.376 1.456-1.49 1.456v1.299c1.114 0 1.49.362 1.49 1.456v1.524c0 1.593.759 2.352 2.372 2.352h.376v-.964h-.273c-.964 0-1.354-.444-1.354-1.538V9.663c0-.984-.492-1.497-1.497-1.6M13.886 7.9v.163c-1.005.103-1.497.616-1.497 1.6v1.798c0 1.094-.39 1.538-1.354 1.538h-.273v.964h.376c1.613 0 2.372-.759 2.372-2.352v-1.524c0-1.094.376-1.456 1.49-1.456V7.332c-1.114 0-1.49-.362-1.49-1.456V4.352C13.51 2.759 12.75 2 11.138 2h-.376v.964h.273c.964 0 1.354.444 1.354 1.538V6.3c0 .984.492 1.497 1.497 1.6"/>
+                    </svg>
+                    <span>JSON Output</span>
                 </div>
             </div>
             
             <!-- Editors Container -->
             <div class="editors-container">
-                <!-- Left Editor -->
-                <div class="md:w-1/2 border-b md:border-b-0 md:border-r border-slate-700 relative">
-                    <div class="absolute bottom-4 right-4 z-10">
-                        <button id="convertButton" class="rounded-full px-3 py-1 bg-indigo-500 bg-opacity-20 border border-indigo-500 border-opacity-30 text-xs text-indigo-300 flex items-center hover-lift">
+                <!-- Input Editor Panel -->
+                <div class="editor-panel">
+                    <!-- Examples Dropdown -->
+                    <div class="examples-button floating-button glass-button-accent">
+                        <button id="examples-dropdown" class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                             </svg>
-                            <span>Convert</span>
+                            <span>Examples</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
                         </button>
-                    </div>
-                    <div class="absolute top-8 right-4 z-10 flex">
-                        <div class="dropdown relative">
-                            <button id="examples-dropdown" class="rounded-full px-3 py-1 bg-indigo-500 bg-opacity-20 border border-indigo-500 border-opacity-30 text-xs text-indigo-300 flex items-center hover-lift">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                                Examples
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </button>
-                            <div id="samples-menu" class="hidden absolute top-8 left-0 bg-gray-800 border border-slate-700 rounded-lg shadow-xl p-2 z-20 dropdown-reveal">
-                                <div id="userSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">User</div>
-                                <div id="productSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">Product</div>
-                                <div id="addressSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">Address</div>
-                                <div id="complexSample" class="p-2 hover:bg-indigo-500 hover:bg-opacity-20 rounded cursor-pointer text-xs">Nested</div>
-                            </div>
+                        <div id="samples-menu" class="dropdown-menu">
+                            <div id="userSample" class="dropdown-item">User Object</div>
+                            <div id="productSample" class="dropdown-item">Product Entity</div>
+                            <div id="addressSample" class="dropdown-item">Address Model</div>
+                            <div id="complexSample" class="dropdown-item">Nested Structure</div>
                         </div>
                     </div>
+                    
+                    <!-- Convert Button -->
+                    <button id="convertButton" class="convert-button floating-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                        <span>Convert</span>
+                    </button>
+                    
                     <div class="editor-container" id="javaEditor"></div>
                 </div>
                 
-                <!-- Right Editor -->
-                <div class="md:w-1/2 relative">
-                    <div class="editor-container" id="jsonEditor"></div>
-                    
+                <!-- Output Editor Panel -->
+                <div class="editor-panel">
                     <!-- Copy Button -->
-                    <div class="absolute bottom-4 right-4">
-                        <button id="copyButton" class="rounded-full px-3 py-1 bg-indigo-500 bg-opacity-20 border border-indigo-500 border-opacity-30 text-xs text-indigo-300 flex items-center hover-lift">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                            </svg>
-                            <span>Copy</span>
-                        </button>
-                    </div>
+                    <button id="copyButton" class="copy-button floating-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                        </svg>
+                        <span>Copy</span>
+                    </button>
+                    
+                    <div class="editor-container" id="jsonEditor"></div>
                 </div>
             </div>
         </div>
         
         <!-- Footer -->
-        <footer class="mt-10 sm:mt-16 border-t border-slate-800 pt-6 sm:pt-8 pb-12 sm:pb-16">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="flex">
-                    <a href="https://github.com/sarkarshuvojit/lomboktojson" class="text-slate-400 hover:text-indigo-300" target="_blank">
-						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
-							<path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
-						</svg>
-					</a>
+        <footer class="mt-20 border-gray-800/50 pt-12 pb-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-6">
+                    <a href="https://github.com/sarkarshuvojit/lomboktojson" class="footer-link flex items-center gap-2" target="_blank">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+                        </svg>
+                        <span class="text-sm font-medium">GitHub</span>
+                    </a>
                 </div>
-                <div class="text-slate-500 text-sm">
-					Crafted under the haunting echo of Lombok’s toString in production logs.
+                <div class="text-center">
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Transform messy Lombok toString outputs into clean, structured JSON
+                    </p>
                 </div>
             </div>
         </footer>

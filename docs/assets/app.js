@@ -130,36 +130,37 @@ require(['vs/editor/editor.main'], function() {
   const examplesDropdown = document.getElementById('examples-dropdown');
   const samplesMenu = document.getElementById('samples-menu');
 
-  examplesDropdown.addEventListener('click', function() {
-    samplesMenu.classList.toggle('hidden');
+  examplesDropdown.addEventListener('click', function(e) {
+    e.stopPropagation();
+    samplesMenu.classList.toggle('show');
   });
 
   // Close dropdown when clicking elsewhere
   document.addEventListener('click', function(event) {
     if (!examplesDropdown.contains(event.target)) {
-      samplesMenu.classList.add('hidden');
+      samplesMenu.classList.remove('show');
     }
   });
 
   // Sample selection
   document.getElementById('userSample').addEventListener('click', function() {
     javaEditor.setValue(sampleCodes.user);
-    samplesMenu.classList.add('hidden');
+    samplesMenu.classList.remove('show');
   });
 
   document.getElementById('productSample').addEventListener('click', function() {
     javaEditor.setValue(sampleCodes.product);
-    samplesMenu.classList.add('hidden');
+    samplesMenu.classList.remove('show');
   });
 
   document.getElementById('addressSample').addEventListener('click', function() {
     javaEditor.setValue(sampleCodes.address);
-    samplesMenu.classList.add('hidden');
+    samplesMenu.classList.remove('show');
   });
 
   document.getElementById('complexSample').addEventListener('click', function() {
     javaEditor.setValue(sampleCodes.complex);
-    samplesMenu.classList.add('hidden');
+    samplesMenu.classList.remove('show');
   });
 
   // Convert button
