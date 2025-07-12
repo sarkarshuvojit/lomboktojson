@@ -106,6 +106,49 @@ require(['vs/editor/editor.main'], function() {
     }
   });
 
+  // Scroll control for editors
+  let javaEditorFocused = false;
+  let jsonEditorFocused = false;
+
+  // Track focus state for Java editor
+  javaEditor.onDidFocusEditorWidget(() => {
+    javaEditorFocused = true;
+  });
+  
+  javaEditor.onDidBlurEditorWidget(() => {
+    javaEditorFocused = false;
+  });
+
+  // Track focus state for JSON editor
+  jsonEditor.onDidFocusEditorWidget(() => {
+    jsonEditorFocused = true;
+  });
+  
+  jsonEditor.onDidBlurEditorWidget(() => {
+    jsonEditorFocused = false;
+  });
+
+  // More aggressive scroll control - capture at document level
+  document.addEventListener('wheel', function(event) {
+    // Check if the scroll is happening over an editor
+    const target = event.target;
+    const javaEditorContainer = document.getElementById('javaEditor');
+    const jsonEditorContainer = document.getElementById('jsonEditor');
+    
+    const isOverJavaEditor = javaEditorContainer.contains(target);
+    const isOverJsonEditor = jsonEditorContainer.contains(target);
+    
+    if (isOverJavaEditor && !javaEditorFocused) {
+      // Prevent editor scroll, allow page scroll
+      event.preventDefault();
+      window.scrollBy(0, event.deltaY);
+    } else if (isOverJsonEditor && !jsonEditorFocused) {
+      // Prevent editor scroll, allow page scroll
+      event.preventDefault();
+      window.scrollBy(0, event.deltaY);
+    }
+  }, { passive: false, capture: true });
+
   // Function to convert Java/Lombok to JSON
   function convertToJson() {
     const lombokInput = javaEditor.getValue();
