@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -263,6 +264,18 @@
         .convert-button:hover {
             background: rgba(59, 130, 246, 1);
         }
+
+        .beautify-button {
+            bottom: 1rem;
+            right: 10rem;
+            background: rgba(59, 130, 246, 0.9);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: white;
+        }
+        
+        .beautify-button:hover {
+            background: rgba(59, 130, 246, 1);
+        }
         
         .examples-button {
             top: 1rem;
@@ -438,16 +451,6 @@
             
             <!-- Editors Container -->
             <div class="editors-container">
-                <!-- Left Editor -->
-                <div class="md:w-1/2 border-b md:border-b-0 md:border-r border-slate-700 relative">
-                    <div class="absolute bottom-4 right-4 z-10 flex space-x-2">
-                        <button id="beautifyButton" class="rounded-full px-3 py-1 bg-indigo-500 bg-opacity-20 border border-indigo-500 border-opacity-30 text-xs text-indigo-300 flex items-center hover-lift">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h10" />
-                            </svg>
-                            <span>Beautify</span>
-                        </button>
-                        <button id="convertButton" class="rounded-full px-3 py-1 bg-indigo-500 bg-opacity-20 border border-indigo-500 border-opacity-30 text-xs text-indigo-300 flex items-center hover-lift">
                 <!-- Input Editor Panel -->
                 <div class="editor-panel">
                     <!-- Examples Dropdown -->
@@ -469,6 +472,14 @@
                         </div>
                     </div>
                     
+                    <!-- Beautify Button -->
+                    <button id="beautifyButton" class="beautify-button floating-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                        <span>Beautify</span>
+                    </button>
+
                     <!-- Convert Button -->
                     <button id="convertButton" class="convert-button floating-button">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -559,3 +570,4 @@
     </script>
 </body>
 </html>
+
