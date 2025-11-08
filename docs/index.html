@@ -17,7 +17,28 @@
 	<meta name="description" content="Easily convert Java objects Lombok @ToString output into JSON format. Ideal for debugging, log parsing, and legacy data handling.">
 	<meta name="keywords" content="Lombok toString to JSON, Lombok parser, Java toString converter, Lombok JSON parser, convert Lombok output to JSON, parse Lombok toString, Java object to JSON, LombokToJson tool">
 	<meta name="author" content="Shuvojit Sarkar">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- PWA Meta Tags -->
+	<meta name="theme-color" content="#3b82f6">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="apple-mobile-web-app-title" content="LombokToJson">
+	<link rel="manifest" href="./manifest.json">
+
+	<!-- Favicons -->
+	<link rel="icon" href="./favicon.ico" sizes="any">
+	<link rel="icon" type="image/png" sizes="48x48" href="./assets/icon-48.png">
+	<link rel="icon" type="image/png" sizes="72x72" href="./assets/icon-72.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="./assets/icon-96.png">
+	<link rel="icon" type="image/png" sizes="144x144" href="./assets/icon-144.png">
+	<link rel="icon" type="image/png" sizes="192x192" href="./assets/icon-192.png">
+	<link rel="icon" type="image/png" sizes="512x512" href="./assets/icon-512.png">
+
+	<!-- Apple Touch Icons -->
+	<link rel="apple-touch-icon" href="./assets/icon-192.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="./assets/icon-192.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="./assets/icon-192.png">
 
 	<!-- Open Graph / Facebook -->
 	<meta property="og:type" content="website">
@@ -500,5 +521,31 @@
             });
     </script>
     <script src="./assets/app.js"> </script>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('[PWA] Service Worker registered successfully:', registration.scope);
+
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New service worker available, show update notification
+                                    console.log('[PWA] New version available! Refresh to update.');
+                                }
+                            });
+                        });
+                    })
+                    .catch(error => {
+                        console.log('[PWA] Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>

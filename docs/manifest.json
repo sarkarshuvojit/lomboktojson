@@ -1,0 +1,69 @@
+{
+  "name": "LombokToJson - Convert Lombok @ToString to JSON",
+  "short_name": "LombokToJson",
+  "description": "Transform Lombok @ToString output into structured JSON format with ease. Perfect for debugging, log parsing, and data analysis.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#030712",
+  "theme_color": "#3b82f6",
+  "orientation": "any",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "./assets/icon-48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "developer tools",
+    "utilities",
+    "productivity"
+  ],
+  "screenshots": [
+    {
+      "src": "./assets/website-screenshot.png",
+      "sizes": "2771x1797",
+      "type": "image/png",
+      "label": "LombokToJson converter interface"
+    }
+  ],
+  "shortcuts": [],
+  "share_target": {
+    "action": "./",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded"
+  },
+  "prefer_related_applications": false
+}
