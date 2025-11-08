@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 
+	"github.com/sarkarshuvojit/lomboktojson/pkg/beautifier"
 	"github.com/sarkarshuvojit/lomboktojson/pkg/generator"
 	"github.com/sarkarshuvojit/lomboktojson/pkg/scanner"
 )
@@ -27,4 +28,11 @@ func LombokToJson(in string) (*string, error) {
 	} else {
 		return nil, errors.New("ERROR: Unable to convert at the moment")
 	}
+}
+
+// Beautify returns the formatted representation of the provided Lombok toString
+// output using the beautifier package. If indent is less than or equal to zero,
+// the beautifier will default to single-space indentation.
+func Beautify(in string, indent int) (string, error) {
+	return beautifier.BeautifySource(in, indent)
 }
