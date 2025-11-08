@@ -126,6 +126,19 @@ require(['vs/editor/editor.main'], function() {
       });
   }
 
+  function beautifyInput() {
+    if (typeof beautifyLombok !== 'function') {
+      console.warn('Beautify function is not ready yet.');
+      return;
+    }
+
+    const lombokInput = javaEditor.getValue();
+    const beautified = beautifyLombok(lombokInput, 2);
+    if (beautified) {
+      javaEditor.setValue(beautified);
+    }
+  }
+
   // Sample dropdown toggle
   const examplesDropdown = document.getElementById('examples-dropdown');
   const samplesMenu = document.getElementById('samples-menu');
@@ -164,6 +177,7 @@ require(['vs/editor/editor.main'], function() {
 
   // Convert button
   document.getElementById('convertButton').addEventListener('click', convertToJson);
+  document.getElementById('beautifyButton').addEventListener('click', beautifyInput);
 
   // Copy button
   document.getElementById('copyButton').addEventListener('click', function() {

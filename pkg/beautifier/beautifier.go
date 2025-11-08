@@ -2,96 +2,82 @@ package beautifier
 
 import (
 	"bytes"
+	"strings"
 
+	"github.com/sarkarshuvojit/lomboktojson/pkg/scanner"
 	"github.com/sarkarshuvojit/lomboktojson/types"
 )
 
-func tabs(indent int, curtab int) string {
-	s := ""
-	for i := 0; i < indent*curtab; i++ {
-		s += " "
-	}
-	return s
-}
-
-func shouldIndent(token types.Token, isArrOpen bool) bool {
-	if token.Type == types.VALUE && isArrOpen {
-		return true
-	}
-	return !(token.Type == types.EQUALS || token.Type == types.VALUE ||
-		token.Type == types.ARRAY_OPEN || token.Type == types.PAREN_OPEN ||
-		token.Type == types.COMMA || token.Type == types.CLASS_NAME)
-}
-
-func shouldPrintNewLineAfter(tokens []types.Token, i int) bool {
-	token := tokens[i]
-
-	if i == len(tokens)-2 {
-		// Last Token
-		return false
-	}
-
-	if token.Type == types.VALUE && tokens[i+1].Type != types.COMMA {
-		// Last key of object before paren end or array end
-		return true
-	}
-
-	return token.Type == types.COMMA ||
-		token.Type == types.PAREN_OPEN ||
-		token.Type == types.PAREN_CLOSE ||
-		token.Type == types.ARRAY_OPEN ||
-		token.Type == types.ARRAY_CLOSE
-}
-
-func shouldPrintNewLineBefore(token types.Token) bool {
-	return false
-}
-
-func shouldIncreaseIndent(token types.Token) bool {
-	return token.Type == types.PAREN_OPEN || token.Type == types.ARRAY_OPEN
-}
-func shouldDecreaseIndent(token types.Token) bool {
-	return token.Type == types.PAREN_CLOSE || token.Type == types.ARRAY_CLOSE
-}
-
 func Beautify(tokens []types.Token, indent int) (asBytes []byte, err error) {
+	if indent <= 0 {
+		indent = 1
+	}
+
 	var buf bytes.Buffer
-	curTab := 0
-	isArrOpen := false
-	for i := range tokens {
+	tabs := 0
+	needIndent := true
+
+	for i := 0; i < len(tokens); i++ {
 		token := tokens[i]
 
-		if token.Type == types.VALUE && tokens[i-1].Type == types.ARRAY_OPEN {
-			isArrOpen = true
-		}
-		if token.Type == types.ARRAY_CLOSE {
-			isArrOpen = false
+		if token.Type == types.EOF {
+			break
 		}
 
-		if shouldDecreaseIndent(token) {
-			curTab--
+		switch token.Type {
+		case types.PAREN_CLOSE, types.ARRAY_CLOSE:
+			if tabs > 0 {
+				tabs--
+			}
+			if !needIndent {
+				buf.WriteString("\n")
+			}
+			needIndent = true
 		}
 
-		if shouldIndent(token, isArrOpen) {
-			buf.WriteString(tabs(indent, curTab))
+		if needIndent {
+			buf.WriteString(strings.Repeat(" ", indent*tabs))
+			needIndent = false
 		}
 
-		if shouldPrintNewLineBefore(token) {
-			buf.WriteString("\n")
-		}
-
-		// Write the actual token's lexeme
 		buf.WriteString(token.Lexeme)
 
-		if shouldIncreaseIndent(token) {
-			curTab++
-		}
-
-		if shouldPrintNewLineAfter(tokens, i) {
+		switch token.Type {
+		case types.CLASS_NAME:
+			if i+1 < len(tokens) && tokens[i+1].Type == types.PAREN_OPEN {
+				// handled alongside the following paren
+			}
+		case types.PAREN_OPEN, types.ARRAY_OPEN:
+			tabs++
 			buf.WriteString("\n")
+			needIndent = true
+		case types.COMMA:
+			buf.WriteString("\n")
+			needIndent = true
+		case types.PAREN_CLOSE, types.ARRAY_CLOSE:
+			if i+1 < len(tokens) && tokens[i+1].Type == types.COMMA {
+				// comma will handle newline
+			} else if i+1 < len(tokens) && (tokens[i+1].Type == types.PAREN_CLOSE || tokens[i+1].Type == types.ARRAY_CLOSE) {
+				buf.WriteString("\n")
+				needIndent = true
+			} else if i+1 < len(tokens) && tokens[i+1].Type != types.EOF {
+				buf.WriteString("\n")
+				needIndent = true
+			}
 		}
-
 	}
-	asBytes = buf.Bytes()
-	return asBytes, nil
+
+	result := strings.TrimRight(buf.String(), "\n")
+	return []byte(result), nil
+}
+
+// BeautifySource scans the input string and returns the formatted output.
+func BeautifySource(source string, indent int) (string, error) {
+	sc := scanner.NewScanner(strings.NewReader(source))
+	tokens := sc.Scan()
+	formatted, err := Beautify(tokens, indent)
+	if err != nil {
+		return "", err
+	}
+	return string(formatted), nil
 }
