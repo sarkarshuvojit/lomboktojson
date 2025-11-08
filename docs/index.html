@@ -253,30 +253,36 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
         
-        .convert-button {
+        .action-buttons-group {
+            position: absolute;
             bottom: 1rem;
             right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .action-button {
             background: rgba(139, 92, 246, 0.1);
             border: 1px solid rgba(139, 92, 246, 0.2);
             color: var(--text-secondary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        .convert-button:hover {
+        .action-button:hover {
             background: rgba(139, 92, 246, 0.15);
             border-color: rgba(139, 92, 246, 0.3);
-        }
-
-        .beautify-button {
-            bottom: 1rem;
-            right: 10rem;
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            color: var(--text-secondary);
-        }
-
-        .beautify-button:hover {
-            background: rgba(139, 92, 246, 0.15);
-            border-color: rgba(139, 92, 246, 0.3);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
         
         .examples-button {
@@ -340,6 +346,15 @@
             .floating-button {
                 padding: 0.4rem 0.6rem;
                 font-size: 0.75rem;
+            }
+
+            .action-button {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.75rem;
+            }
+
+            .action-buttons-group {
+                gap: 0.375rem;
             }
         }
         
@@ -475,21 +490,21 @@
                         </div>
                     </div>
                     
-                    <!-- Beautify Button -->
-                    <button id="beautifyButton" class="beautify-button floating-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                        </svg>
-                        <span>Beautify</span>
-                    </button>
-
-                    <!-- Convert Button -->
-                    <button id="convertButton" class="convert-button floating-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                        </svg>
-                        <span>Convert</span>
-                    </button>
+                    <!-- Action Buttons -->
+                    <div class="action-buttons-group">
+                        <button id="beautifyButton" class="action-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+                            </svg>
+                            <span>Auto-Indent</span>
+                        </button>
+                        <button id="convertButton" class="action-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                            </svg>
+                            <span>Convert</span>
+                        </button>
+                    </div>
                     
                     <div class="editor-container" id="javaEditor"></div>
                 </div>
