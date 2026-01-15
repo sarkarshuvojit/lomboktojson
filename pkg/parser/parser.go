@@ -24,14 +24,14 @@ func Parse(tokens []types.Token) (types.Node, error) {
 		return nil, err
 	}
 	if !p.isAtEnd() {
-		return nil, fmt.Errorf("unexpected token %s at line %d", p.peek().Type, p.peek().Line)
+		return nil, fmt.Errorf("%w: %s at line %d", ErrTrailingTokens, p.peek().Type, p.peek().Line)
 	}
 	return node, nil
 }
 
 func (p *Parser) parseNode() (types.Node, error) {
 	if p.isAtEnd() {
-		return nil, fmt.Errorf("unexpected end of input")
+		return nil, ErrUnexpectedEOF
 	}
 
 	switch p.peek().Type {
@@ -43,7 +43,7 @@ func (p *Parser) parseNode() (types.Node, error) {
 		tok := p.advance()
 		return &types.ValueNode{Value: tok.Lexeme}, nil
 	default:
-		return nil, fmt.Errorf("unexpected token %s at line %d", p.peek().Type, p.peek().Line)
+		return nil, fmt.Errorf("%w: %s at line %d", ErrUnexpectedToken, p.peek().Type, p.peek().Line)
 	}
 }
 
@@ -75,12 +75,18 @@ func (p *Parser) parseObject() (types.Node, error) {
 		})
 
 		if p.match(types.COMMA) {
+			if p.check(types.PAREN_CLOSE) {
+				return nil, ErrTrailingCommaObject
+			}
 			continue
 		}
 		if p.check(types.PAREN_CLOSE) {
 			break
 		}
-		return nil, fmt.Errorf("expected ',' or ')' after value at line %d", p.peek().Line)
+		if p.isAtEnd() {
+			return nil, ErrUnexpectedEOF
+		}
+		return nil, fmt.Errorf("%w: %s at line %d", ErrUnexpectedToken, p.peek().Type, p.peek().Line)
 	}
 
 	if _, err = p.consume(types.PAREN_CLOSE, "expected ')' after object body"); err != nil {
@@ -107,12 +113,18 @@ func (p *Parser) parseArray() (types.Node, error) {
 		elements = append(elements, elem)
 
 		if p.match(types.COMMA) {
+			if p.check(types.ARRAY_CLOSE) {
+				return nil, ErrTrailingCommaArray
+			}
 			continue
 		}
 		if p.check(types.ARRAY_CLOSE) {
 			break
 		}
-		return nil, fmt.Errorf("expected ',' or ']' after array element at line %d", p.peek().Line)
+		if p.isAtEnd() {
+			return nil, ErrUnexpectedEOF
+		}
+		return nil, fmt.Errorf("%w: %s at line %d", ErrUnexpectedToken, p.peek().Type, p.peek().Line)
 	}
 
 	if _, err := p.consume(types.ARRAY_CLOSE, "expected ']' after array body"); err != nil {

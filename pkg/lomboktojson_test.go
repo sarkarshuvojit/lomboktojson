@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/sarkarshuvojit/lomboktojson/pkg"
+	"github.com/sarkarshuvojit/lomboktojson/pkg/parser"
 	"github.com/sarkarshuvojit/lomboktojson/pkg/scanner"
 	"github.com/stretchr/testify/assert"
 )
@@ -120,5 +121,52 @@ func TestLombokToJson_InvalidTrailingTokens(t *testing.T) {
 	result, err := pkg.LombokToJson(input)
 	if err == nil {
 		t.Fatalf("Expected error due to trailing tokens but got result: %v", result)
+	}
+	if !errors.Is(err, parser.ErrTrailingTokens) && !errors.Is(err, parser.ErrUnexpectedToken) {
+		t.Fatalf("Unexpected error type: %v", err)
+	}
+}
+
+func TestLombokToJson_InvalidTrailingCommaObject(t *testing.T) {
+	input := "Customer(name=Raju,)"
+	result, err := pkg.LombokToJson(input)
+	if err == nil {
+		t.Fatalf("Expected error due to trailing comma but got result: %v", result)
+	}
+	if !errors.Is(err, parser.ErrTrailingCommaObject) {
+		t.Fatalf("Unexpected error type: %v", err)
+	}
+}
+
+func TestLombokToJson_InvalidTrailingCommaArray(t *testing.T) {
+	input := "Basket(items=[apple,])"
+	result, err := pkg.LombokToJson(input)
+	if err == nil {
+		t.Fatalf("Expected error due to trailing comma in array but got result: %v", result)
+	}
+	if !errors.Is(err, parser.ErrTrailingCommaArray) {
+		t.Fatalf("Unexpected error type: %v", err)
+	}
+}
+
+func TestLombokToJson_MissingClosingParen(t *testing.T) {
+	input := "Customer(name=Raju"
+	result, err := pkg.LombokToJson(input)
+	if err == nil {
+		t.Fatalf("Expected error due to missing closing paren but got result: %v", result)
+	}
+	if !errors.Is(err, parser.ErrUnexpectedEOF) {
+		t.Fatalf("Unexpected error type: %v", err)
+	}
+}
+
+func TestLombokToJson_ArrayClosedWithParen(t *testing.T) {
+	input := "Customer(scores=[1,2)"
+	result, err := pkg.LombokToJson(input)
+	if err == nil {
+		t.Fatalf("Expected error due to mismatched closing token but got result: %v", result)
+	}
+	if !errors.Is(err, parser.ErrUnexpectedToken) {
+		t.Fatalf("Unexpected error type: %v", err)
 	}
 }
