@@ -44,6 +44,20 @@ func Test_ScanSimple(t *testing.T) {
 			t.Fatalf("Unexpected error message: %v", err)
 		}
 	})
+	t.Run("Should error when value is missing", func(t *testing.T) {
+		source := `Customer(name=,age=50)`
+		var sourceBuf bytes.Buffer
+		sourceBuf.WriteString(source)
+
+		scanner := NewScanner(&sourceBuf)
+		_, err := scanner.Scan()
+		if err == nil {
+			t.Fatalf("Expected error but got none")
+		}
+		if !errors.Is(err, ErrValueExpected) {
+			t.Fatalf("Unexpected error message: %v", err)
+		}
+	})
 	t.Run("Customer()", func(t *testing.T) {
 		source := `Customer()`
 		var sourceBuf bytes.Buffer

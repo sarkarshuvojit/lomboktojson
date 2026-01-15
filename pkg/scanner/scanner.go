@@ -69,6 +69,14 @@ func (s *Scanner) lastToken() *types.Token {
 	return &s.tokens[len(s.tokens)-1]
 }
 
+func (s *Scanner) ensureValuePresent() error {
+	last := s.lastToken()
+	if last != nil && last.Type == types.EQUALS {
+		return ErrValueExpected
+	}
+	return nil
+}
+
 func (s *Scanner) stringLiteralToToken(literal string) types.Token {
 	if s.literalEnd+1 < len(s.sourceBytes) && s.sourceBytes[s.literalEnd+1] == '(' {
 		return types.NewToken(
@@ -170,6 +178,9 @@ func (s *Scanner) Scan() ([]types.Token, error) {
 			break
 		case ",":
 			s.clearStringLiterals()
+			if err := s.ensureValuePresent(); err != nil {
+				return nil, err
+			}
 			_token := types.NewToken(
 				types.COMMA,
 				ch,
@@ -191,6 +202,9 @@ func (s *Scanner) Scan() ([]types.Token, error) {
 			break
 		case "]":
 			s.clearStringLiterals()
+			if err := s.ensureValuePresent(); err != nil {
+				return nil, err
+			}
 			_token := types.NewToken(
 				types.ARRAY_CLOSE,
 				ch,
@@ -212,6 +226,11 @@ func (s *Scanner) Scan() ([]types.Token, error) {
 			}
 		}
 		s.end++
+	}
+
+	s.clearStringLiterals()
+	if err := s.ensureValuePresent(); err != nil {
+		return nil, err
 	}
 
 	s.tokens = append(s.tokens, types.NewToken(types.EOF, "", nil, s.curline))

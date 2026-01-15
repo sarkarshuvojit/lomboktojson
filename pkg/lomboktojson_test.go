@@ -103,3 +103,14 @@ func TestLombokToJson_InvalidInputMissingKey(t *testing.T) {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 }
+
+func TestLombokToJson_InvalidInputMissingValue(t *testing.T) {
+	input := "Product(id=1,name=,inStock=true)"
+	result, err := pkg.LombokToJson(input)
+	if err == nil {
+		t.Fatalf("Expected error but got none with result: %v", result)
+	}
+	if !errors.Is(err, scanner.ErrValueExpected) {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+}
