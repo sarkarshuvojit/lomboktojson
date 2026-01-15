@@ -62,6 +62,13 @@ func isLiteral(ch string) bool {
 	return isAlpha(ch) || isNum(ch) || ch == "."
 }
 
+func (s *Scanner) lastToken() *types.Token {
+	if len(s.tokens) == 0 {
+		return nil
+	}
+	return &s.tokens[len(s.tokens)-1]
+}
+
 func (s *Scanner) stringLiteralToToken(literal string) types.Token {
 	if s.literalEnd+1 < len(s.sourceBytes) && s.sourceBytes[s.literalEnd+1] == '(' {
 		return types.NewToken(
@@ -120,7 +127,7 @@ func (s *Scanner) clearStringLiterals() {
 // It walks through the byte stream, identifies literals, delimiters,
 // and structural characters, and builds a tokenized representation
 // of the Lombok-formatted string.
-func (s *Scanner) Scan() []types.Token {
+func (s *Scanner) Scan() ([]types.Token, error) {
 
 	for chIdx := range s.sourceBytes {
 		ch := string(s.sourceBytes[chIdx])
@@ -149,6 +156,10 @@ func (s *Scanner) Scan() []types.Token {
 			break
 		case "=":
 			s.clearStringLiterals()
+			last := s.lastToken()
+			if last == nil || last.Type != types.KEY {
+				return nil, ErrKeyExpected
+			}
 			_token := types.NewToken(
 				types.EQUALS,
 				ch,
@@ -204,5 +215,5 @@ func (s *Scanner) Scan() []types.Token {
 	}
 
 	s.tokens = append(s.tokens, types.NewToken(types.EOF, "", nil, s.curline))
-	return s.tokens
+	return s.tokens, nil
 }

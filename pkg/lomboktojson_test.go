@@ -1,9 +1,11 @@
 package pkg_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/sarkarshuvojit/lomboktojson/pkg"
+	"github.com/sarkarshuvojit/lomboktojson/pkg/scanner"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -88,5 +90,16 @@ func TestLombokToJson_NestedValidInputs(t *testing.T) {
 				t.Errorf("For %s:\nExpected: %s\nGot: %s", tt.name, tt.expected, *result)
 			}*/
 		})
+	}
+}
+
+func TestLombokToJson_InvalidInputMissingKey(t *testing.T) {
+	input := "Product(id=1,=something)"
+	result, err := pkg.LombokToJson(input)
+	if err == nil {
+		t.Fatalf("Expected error but got none with result: %v", result)
+	}
+	if !errors.Is(err, scanner.ErrKeyExpected) {
+		t.Fatalf("Unexpected error: %v", err)
 	}
 }
