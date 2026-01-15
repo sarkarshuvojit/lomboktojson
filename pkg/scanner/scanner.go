@@ -24,6 +24,8 @@ type Scanner struct {
 	literalEnd     int
 
 	tokens []types.Token
+
+	containerStack []types.TokenType
 }
 
 func NewScanner(source io.Reader) *Scanner {
@@ -44,6 +46,8 @@ func NewScanner(source io.Reader) *Scanner {
 		literalStarted: false,
 		literalStart:   -1,
 		literalEnd:     -1,
+
+		containerStack: []types.TokenType{},
 	}
 }
 
@@ -75,6 +79,24 @@ func (s *Scanner) ensureValuePresent() error {
 		return ErrValueExpected
 	}
 	return nil
+}
+
+func (s *Scanner) pushContainer(t types.TokenType) {
+	s.containerStack = append(s.containerStack, t)
+}
+
+func (s *Scanner) popContainer() {
+	if len(s.containerStack) == 0 {
+		return
+	}
+	s.containerStack = s.containerStack[:len(s.containerStack)-1]
+}
+
+func (s *Scanner) currentContainer() types.TokenType {
+	if len(s.containerStack) == 0 {
+		return ""
+	}
+	return s.containerStack[len(s.containerStack)-1]
 }
 
 func (s *Scanner) stringLiteralToToken(literal string) types.Token {
@@ -111,11 +133,12 @@ func (s *Scanner) stringLiteralToToken(literal string) types.Token {
 
 }
 
-func (s *Scanner) clearStringLiterals() {
+func (s *Scanner) clearStringLiterals() error {
 	if s.literalStarted {
 		if s.literalEnd < s.literalStart {
 			s.literalEnd = s.literalStart
 		}
+		prevToken := s.lastToken()
 		literal := s.sourceBytes[s.literalStart : s.literalEnd+1]
 		_token := types.NewToken(
 			types.STRING_LITERAL,
@@ -127,7 +150,15 @@ func (s *Scanner) clearStringLiterals() {
 		s.tokens = append(s.tokens, _token)
 		s.literalStarted = false
 		s.literalStart = -1
+
+		// If we're inside an object and just saw a bare literal where a key should be, error out.
+		if _token.Type == types.STRING_LITERAL && s.currentContainer() == types.PAREN_OPEN {
+			if prevToken == nil || prevToken.Type == types.PAREN_OPEN || prevToken.Type == types.COMMA {
+				return ErrKeyExpected
+			}
+		}
 	}
+	return nil
 }
 
 // Scan processes the input source and returns a slice of tokens.
@@ -141,7 +172,9 @@ func (s *Scanner) Scan() ([]types.Token, error) {
 		ch := string(s.sourceBytes[chIdx])
 		switch ch {
 		case "(":
-			s.clearStringLiterals()
+			if err := s.clearStringLiterals(); err != nil {
+				return nil, err
+			}
 			_token := types.NewToken(
 				types.PAREN_OPEN,
 				ch,
@@ -150,9 +183,12 @@ func (s *Scanner) Scan() ([]types.Token, error) {
 			)
 			s.tokens = append(s.tokens, _token)
 			s.parenOpen++
+			s.pushContainer(types.PAREN_OPEN)
 			break
 		case ")":
-			s.clearStringLiterals()
+			if err := s.clearStringLiterals(); err != nil {
+				return nil, err
+			}
 			_token := types.NewToken(
 				types.PAREN_CLOSE,
 				ch,
@@ -161,9 +197,12 @@ func (s *Scanner) Scan() ([]types.Token, error) {
 			)
 			s.tokens = append(s.tokens, _token)
 			s.parenOpen--
+			s.popContainer()
 			break
 		case "=":
-			s.clearStringLiterals()
+			if err := s.clearStringLiterals(); err != nil {
+				return nil, err
+			}
 			last := s.lastToken()
 			if last == nil || last.Type != types.KEY {
 				return nil, ErrKeyExpected
@@ -177,7 +216,9 @@ func (s *Scanner) Scan() ([]types.Token, error) {
 			s.tokens = append(s.tokens, _token)
 			break
 		case ",":
-			s.clearStringLiterals()
+			if err := s.clearStringLiterals(); err != nil {
+				return nil, err
+			}
 			if err := s.ensureValuePresent(); err != nil {
 				return nil, err
 			}
@@ -199,9 +240,12 @@ func (s *Scanner) Scan() ([]types.Token, error) {
 			)
 			s.tokens = append(s.tokens, _token)
 			s.parenOpen++
+			s.pushContainer(types.ARRAY_OPEN)
 			break
 		case "]":
-			s.clearStringLiterals()
+			if err := s.clearStringLiterals(); err != nil {
+				return nil, err
+			}
 			if err := s.ensureValuePresent(); err != nil {
 				return nil, err
 			}
@@ -213,6 +257,7 @@ func (s *Scanner) Scan() ([]types.Token, error) {
 			)
 			s.tokens = append(s.tokens, _token)
 			s.parenOpen--
+			s.popContainer()
 			break
 		default:
 			if isLiteral(ch) {
@@ -228,7 +273,9 @@ func (s *Scanner) Scan() ([]types.Token, error) {
 		s.end++
 	}
 
-	s.clearStringLiterals()
+	if err := s.clearStringLiterals(); err != nil {
+		return nil, err
+	}
 	if err := s.ensureValuePresent(); err != nil {
 		return nil, err
 	}
