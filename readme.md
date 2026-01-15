@@ -121,6 +121,46 @@ LombokToJson bridges this gap by providing a simple conversion utility.
 - High performance parsing
 - Supports nested objects and collections
 
+## AST Overview
+
+The converter now walks a lightweight AST so that both JSON generation and beautified Lombok output share the same structure.
+
+```mermaid
+classDiagram
+    class Node {
+      <<interface>>
+      NodeType() NodeType
+    }
+    class ObjectNode {
+      string ClassName
+      []ObjectField Fields
+    }
+    class ObjectField {
+      string Key
+      Node Value
+    }
+    class ArrayNode {
+      []Node Elements
+    }
+    class ValueNode {
+      string Value
+    }
+
+    Node <|.. ObjectNode
+    Node <|.. ArrayNode
+    Node <|.. ValueNode
+    ObjectNode "1" --> "*" ObjectField
+    ObjectField "*" --> "1" Node
+    ArrayNode "1" --> "*" Node
+```
+
+Pipeline flow:
+
+- `scanner` tokenizes Lombok strings into token streams.
+- `parser` builds the AST (nodes above) and performs structural validation.
+- `generator` walks the AST to emit JSON.
+- `beautifier` walks the same AST to produce formatted Lombok-style output.
+
 ## Testing
 
 ### Using Go's built-in test tool
