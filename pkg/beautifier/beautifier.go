@@ -74,7 +74,10 @@ func Beautify(tokens []types.Token, indent int) (asBytes []byte, err error) {
 // BeautifySource scans the input string and returns the formatted output.
 func BeautifySource(source string, indent int) (string, error) {
 	sc := scanner.NewScanner(strings.NewReader(source))
-	tokens := sc.Scan()
+	tokens, err := sc.Scan()
+	if err != nil {
+		return "", err
+	}
 	formatted, err := Beautify(tokens, indent)
 	if err != nil {
 		return "", err

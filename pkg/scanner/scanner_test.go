@@ -2,6 +2,7 @@ package scanner
 
 import (
 	"bytes"
+	"errors"
 	"testing"
 
 	"github.com/sarkarshuvojit/lomboktojson/types"
@@ -14,7 +15,10 @@ func Test_ScanSimple(t *testing.T) {
 		sourceBuf.WriteString(source)
 
 		scanner := NewScanner(&sourceBuf)
-		tokens := scanner.Scan()
+		tokens, err := scanner.Scan()
+		if err != nil {
+			t.Fatalf("Unexpected error: %v", err)
+		}
 
 		expectedTokenLen := 1
 		if len(tokens) != expectedTokenLen {
@@ -26,12 +30,43 @@ func Test_ScanSimple(t *testing.T) {
 			t.Errorf("Should return EOF, got %s", tokens[0].Type)
 		}
 	})
+	t.Run("Should error when equals comes without key", func(t *testing.T) {
+		source := `Customer(=value)`
+		var sourceBuf bytes.Buffer
+		sourceBuf.WriteString(source)
+
+		scanner := NewScanner(&sourceBuf)
+		_, err := scanner.Scan()
+		if err == nil {
+			t.Fatalf("Expected error but got none")
+		}
+		if !errors.Is(err, ErrKeyExpected) {
+			t.Fatalf("Unexpected error message: %v", err)
+		}
+	})
+	t.Run("Should error when value is missing", func(t *testing.T) {
+		source := `Customer(name=,age=50)`
+		var sourceBuf bytes.Buffer
+		sourceBuf.WriteString(source)
+
+		scanner := NewScanner(&sourceBuf)
+		_, err := scanner.Scan()
+		if err == nil {
+			t.Fatalf("Expected error but got none")
+		}
+		if !errors.Is(err, ErrValueExpected) {
+			t.Fatalf("Unexpected error message: %v", err)
+		}
+	})
 	t.Run("Customer()", func(t *testing.T) {
 		source := `Customer()`
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
 		scanner := NewScanner(&sourceBuf)
-		tokens := scanner.Scan()
+		tokens, err := scanner.Scan()
+		if err != nil {
+			t.Fatalf("Unexpected error: %v", err)
+		}
 
 		expectedTokenLen := 4
 		if len(tokens) != expectedTokenLen {
@@ -51,7 +86,10 @@ func Test_ScanTheCustomer(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
 		scanner := NewScanner(&sourceBuf)
-		tokens := scanner.Scan()
+		tokens, err := scanner.Scan()
+		if err != nil {
+			t.Fatalf("Unexpected error: %v", err)
+		}
 
 		expectedTokenLen := 7
 		if len(tokens) != expectedTokenLen {
@@ -73,7 +111,10 @@ func Test_ScanTheCustomer(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
 		scanner := NewScanner(&sourceBuf)
-		tokens := scanner.Scan()
+		tokens, err := scanner.Scan()
+		if err != nil {
+			t.Fatalf("Unexpected error: %v", err)
+		}
 
 		// Customer | ParenOpen | Key | EQUALS | Value | PAREN_CLOSE | EOF
 		// 0			1			2	3		4		5			6
@@ -101,7 +142,10 @@ func Test_ScanTheCustomerWithMultipleFieldsFlat(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
 		scanner := NewScanner(&sourceBuf)
-		tokens := scanner.Scan()
+		tokens, err := scanner.Scan()
+		if err != nil {
+			t.Fatalf("Unexpected error: %v", err)
+		}
 
 		expectedTokenLen := 15
 		if len(tokens) != expectedTokenLen {
@@ -127,7 +171,10 @@ func Test_ScanTheCustomerWithMultipleFieldsFlat(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
 		scanner := NewScanner(&sourceBuf)
-		tokens := scanner.Scan()
+		tokens, err := scanner.Scan()
+		if err != nil {
+			t.Fatalf("Unexpected error: %v", err)
+		}
 
 		expectedTokenTypes := [15]types.TokenType{
 			types.CLASS_NAME, types.PAREN_OPEN,
@@ -154,7 +201,10 @@ func Test_ScanTheCustomerWithMultipleFieldsNested(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
 		scanner := NewScanner(&sourceBuf)
-		tokens := scanner.Scan()
+		tokens, err := scanner.Scan()
+		if err != nil {
+			t.Fatalf("Unexpected error: %v", err)
+		}
 
 		expectedTokenLen := 15
 		if len(tokens) != expectedTokenLen {
@@ -180,7 +230,10 @@ func Test_ScanTheCustomerWithMultipleFieldsNested(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
 		scanner := NewScanner(&sourceBuf)
-		tokens := scanner.Scan()
+		tokens, err := scanner.Scan()
+		if err != nil {
+			t.Fatalf("Unexpected error: %v", err)
+		}
 
 		expectedTokenTypes := [15]types.TokenType{
 			types.CLASS_NAME, types.PAREN_OPEN,
@@ -207,7 +260,10 @@ func Test_ScanTheCustomerWithArrayField(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
 		scanner := NewScanner(&sourceBuf)
-		tokens := scanner.Scan()
+		tokens, err := scanner.Scan()
+		if err != nil {
+			t.Fatalf("Unexpected error: %v", err)
+		}
 
 		expectedTokenLen := 15
 		if len(tokens) != expectedTokenLen {
@@ -233,7 +289,10 @@ func Test_ScanTheCustomerWithArrayField(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
 		scanner := NewScanner(&sourceBuf)
-		tokens := scanner.Scan()
+		tokens, err := scanner.Scan()
+		if err != nil {
+			t.Fatalf("Unexpected error: %v", err)
+		}
 
 		expectedTokenLen := 15
 		if len(tokens) != expectedTokenLen {
@@ -263,7 +322,10 @@ func Test_ScanArrayOfObjects(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
 		scanner := NewScanner(&sourceBuf)
-		tokens := scanner.Scan()
+		tokens, err := scanner.Scan()
+		if err != nil {
+			t.Fatalf("Unexpected error: %v", err)
+		}
 
 		expectedTokenLen := 21
 		if len(tokens) != expectedTokenLen {
@@ -290,7 +352,10 @@ func Test_ScanArrayOfObjects(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
 		scanner := NewScanner(&sourceBuf)
-		tokens := scanner.Scan()
+		tokens, err := scanner.Scan()
+		if err != nil {
+			t.Fatalf("Unexpected error: %v", err)
+		}
 
 		expectedTokenLen := 21
 		if len(tokens) != expectedTokenLen {

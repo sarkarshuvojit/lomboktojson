@@ -25,7 +25,10 @@ func Test_ScanNestedCustomerWithArraysLombokStyle(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
 		scanner := NewScanner(&sourceBuf)
-		tokens := scanner.Scan()
+		tokens, err := scanner.Scan()
+		if err != nil {
+			t.Fatalf("Unexpected error: %v", err)
+		}
 
 		expectedTokenLen := 71
 
@@ -64,7 +67,10 @@ func Test_ScanNestedCustomerWithArraysLombokStyle(t *testing.T) {
 		var sourceBuf bytes.Buffer
 		sourceBuf.WriteString(source)
 		scanner := NewScanner(&sourceBuf)
-		tokens := scanner.Scan()
+		tokens, err := scanner.Scan()
+		if err != nil {
+			t.Fatalf("Unexpected error: %v", err)
+		}
 
 		expectedTokenLen := 71
 

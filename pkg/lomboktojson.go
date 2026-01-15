@@ -21,7 +21,10 @@ func LombokToJson(in string) (*string, error) {
 	sourceBuf.WriteString(in)
 
 	scanner := scanner.NewScanner(&sourceBuf)
-	tokens := scanner.Scan()
+	tokens, err := scanner.Scan()
+	if err != nil {
+		return nil, err
+	}
 	if val, err := generator.Generate(tokens); err == nil {
 		valStr := string(val)
 		return &valStr, nil

@@ -1,9 +1,11 @@
 package pkg_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/sarkarshuvojit/lomboktojson/pkg"
+	"github.com/sarkarshuvojit/lomboktojson/pkg/scanner"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -62,6 +64,16 @@ func TestLombokToJson_NestedValidInputs(t *testing.T) {
 			input:    "Matrix(values=[[1,2],[3,4]])",
 			expected: `{"values":[[1,2],[3,4]]}`,
 		},
+		{
+			name:     "Truncated decimal treated as string",
+			input:    "Product(id=102,name=Laptop,price=[999.99...],inStock=true)",
+			expected: `{"id":102,"name":"Laptop","price":["999.99..."],"inStock":true}`,
+		},
+		{
+			name:     "Non-numeric float-like string",
+			input:    "Product(id=102,name=Laptop,price=99.99ggwwp,inStock=true)",
+			expected: `{"id":102,"name":"Laptop","price":"99.99ggwwp","inStock":true}`,
+		},
 	}
 
 	for _, tt := range tests {
@@ -78,5 +90,27 @@ func TestLombokToJson_NestedValidInputs(t *testing.T) {
 				t.Errorf("For %s:\nExpected: %s\nGot: %s", tt.name, tt.expected, *result)
 			}*/
 		})
+	}
+}
+
+func TestLombokToJson_InvalidInputMissingKey(t *testing.T) {
+	input := "Product(id=1,=something)"
+	result, err := pkg.LombokToJson(input)
+	if err == nil {
+		t.Fatalf("Expected error but got none with result: %v", result)
+	}
+	if !errors.Is(err, scanner.ErrKeyExpected) {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+}
+
+func TestLombokToJson_InvalidInputMissingValue(t *testing.T) {
+	input := "Product(id=1,name=,inStock=true)"
+	result, err := pkg.LombokToJson(input)
+	if err == nil {
+		t.Fatalf("Expected error but got none with result: %v", result)
+	}
+	if !errors.Is(err, scanner.ErrValueExpected) {
+		t.Fatalf("Unexpected error: %v", err)
 	}
 }
