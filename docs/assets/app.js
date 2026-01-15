@@ -106,6 +106,17 @@ require(['vs/editor/editor.main'], function() {
     }
   });
 
+  function showParseError(message) {
+    const text = `// Error parsing input\n// ${message}`;
+    jsonEditor.updateOptions({ readOnly: false });
+    jsonEditor.setValue(text);
+    jsonEditor.updateOptions({ readOnly: true });
+  }
+
+  window.onLombokToJsonError = function(message) {
+    showParseError(message || 'Unknown parsing error');
+  };
+
   // Scroll control for editors
   let javaEditorFocused = false;
   let jsonEditorFocused = false;
@@ -153,7 +164,14 @@ require(['vs/editor/editor.main'], function() {
   function convertToJson() {
     const lombokInput = javaEditor.getValue();
     console.log(lombokInput);
+    if (typeof lombokToJson !== 'function') {
+      showParseError('Parser is not ready yet.');
+      return;
+    }
     let jsonOutput = lombokToJson(lombokInput);
+    if (!jsonOutput) {
+      return;
+    }
     jsonEditor.setValue(jsonOutput);
 
     // edit mode

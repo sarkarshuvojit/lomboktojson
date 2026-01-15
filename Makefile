@@ -9,3 +9,5 @@ dep:
 
 wasm:
 	@GOOS=js GOARCH=wasm go build -o docs/assets/lombok2json.wasm cmd/l2j4wasm/main.go
+ui:
+	cd docs && python3 -m http.server 7800
