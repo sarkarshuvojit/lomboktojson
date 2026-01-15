@@ -37,6 +37,31 @@ func TestLombokToJson_NestedValidInputs(t *testing.T) {
 			input:    "Wrapper(data=Response(status=200,body=Order(id=123,customer=Customer(name=Raju),amount=500.0)))",
 			expected: `{"data":{"status":200,"body":{"id":123,"customer":{"name":"Raju"},"amount":500.0}}}`,
 		},
+		{
+			name:     "Nested array of objects",
+			input:    "Invoice(number=INV1234, date=2023-12-01, items=[Item(id=1),Item(id=2)])",
+			expected: `{"number":"INV1234","date":"2023-12-01","items":[{"id":1},{"id":2}]}`,
+		},
+		{
+			name:     "Simple array of numbers",
+			input:    "Scores(values=[90,85,95])",
+			expected: `{"values":[90,85,95]}`,
+		},
+		{
+			name:     "Simple array of strings",
+			input:    "Basket(items=[apple,banana,orange])",
+			expected: `{"items":["apple","banana","orange"]}`,
+		},
+		{
+			name:     "Array of mixed literals",
+			input:    "Flags(values=[true,false,null,0,1])",
+			expected: `{"values":[true,false,null,0,1]}`,
+		},
+		{
+			name:     "Nested arrays",
+			input:    "Matrix(values=[[1,2],[3,4]])",
+			expected: `{"values":[[1,2],[3,4]]}`,
+		},
 	}
 
 	for _, tt := range tests {
