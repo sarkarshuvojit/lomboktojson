@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/sarkarshuvojit/lomboktojson/pkg/beautifier"
+	"github.com/sarkarshuvojit/lomboktojson/pkg/parser"
 	"github.com/sarkarshuvojit/lomboktojson/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -156,7 +157,11 @@ func TestBeautify(t *testing.T) {
 	for _, tt := range tests {
 		if !tt.skipTest {
 			t.Run(tt.name, func(t *testing.T) {
-				result, _ := beautifier.Beautify(tt.tokens, tt.indent)
+				node, err := parser.Parse(tt.tokens)
+				assert.NoError(t, err)
+
+				result, err := beautifier.Beautify(node, tt.indent)
+				assert.NoError(t, err)
 				assert.Equal(t, tt.expected, string(result))
 			})
 		}

@@ -8,8 +8,6 @@ import (
 	"github.com/sarkarshuvojit/lomboktojson/types"
 )
 
-type singleTokenToJson func(int, []types.Token) ([]byte, bool)
-
 func isNumeric(s string) bool {
 	re := regexp.MustCompile(`^\d+$`)
 	return re.MatchString(s)
@@ -32,80 +30,62 @@ func getOptionallyQuotedValue(val string) string {
 	return fmt.Sprintf("\"%s\"", val)
 }
 
-var tokenTypeGeneratorMapping map[types.TokenType]singleTokenToJson = map[types.TokenType]singleTokenToJson{
-	types.EOF: func(i int, ts []types.Token) ([]byte, bool) {
-		return []byte(``), false
-	},
-	types.CLASS_NAME: func(i int, ts []types.Token) ([]byte, bool) {
-		return []byte(``), false
-	},
-	types.KEY: func(i int, ts []types.Token) ([]byte, bool) {
-		t := ts[i]
-		return []byte(getOptionallyQuotedValue(t.Lexeme)), true
-	},
-	types.VALUE: func(i int, ts []types.Token) ([]byte, bool) {
-		t := ts[i]
-		return []byte(getOptionallyQuotedValue(t.Lexeme)), true
-	},
-	types.STRING_LITERAL: func(i int, ts []types.Token) ([]byte, bool) {
-		t := ts[i]
-		return []byte(getOptionallyQuotedValue(t.Lexeme)), true
-	},
-	types.EQUALS: func(i int, ts []types.Token) ([]byte, bool) {
-		// t := ts[i]
-		return []byte(`:`), true
-	},
-	types.COMMA: func(i int, ts []types.Token) ([]byte, bool) {
-		// t := ts[i]
-		return []byte(`,`), true
-	},
-	types.PAREN_OPEN: func(i int, t []types.Token) ([]byte, bool) {
-		if i == 0 {
-			return []byte(``), false
-		}
-		if t[i-1].Type == types.CLASS_NAME {
-			return []byte(`{`), true
-		}
-		return []byte(``), false
-	},
-	types.PAREN_CLOSE: func(i int, t []types.Token) ([]byte, bool) {
-		return []byte(`}`), true
-	},
-	types.ARRAY_OPEN: func(i int, t []types.Token) ([]byte, bool) {
-		return []byte(`[`), true
-	},
-	types.ARRAY_CLOSE: func(i int, t []types.Token) ([]byte, bool) {
-		return []byte(`]`), true
-	},
-}
+// Generate converts an AST produced by the parser into JSON bytes.
+func Generate(node types.Node) ([]byte, error) {
+	if node == nil {
+		return []byte("{}"), nil
+	}
 
-// Generate converts a sequence of parsed tokens into a JSON-formatted byte slice.
-//
-// It iterates through the provided tokens and builds a JSON object based on
-// recognized key-value patterns or structured groupings.
-//
-// Returns a JSON byte slice on success, or an empty JSON object ("{}") if no valid tokens are found.
-func Generate(tokens []types.Token) ([]byte, error) {
 	var buf bytes.Buffer
-	for i := range tokens {
-		if tknBytes, present := generateTokenAt(i, tokens); present {
-			buf.Write(tknBytes)
-		}
+	if err := writeNode(&buf, node); err != nil {
+		return nil, err
 	}
 
 	if buf.Len() == 0 {
 		buf.WriteString("{}")
 	}
-	asBytes := buf.Bytes()
-	return asBytes, nil
+	return buf.Bytes(), nil
 }
 
-func generateTokenAt(i int, tokens []types.Token) ([]byte, bool) {
-	token := tokens[i]
-	if converterFn, ok := tokenTypeGeneratorMapping[token.Type]; ok {
-		return converterFn(i, tokens)
-	} else {
-		return []byte(``), false
+func writeNode(buf *bytes.Buffer, node types.Node) error {
+	switch n := node.(type) {
+	case *types.ObjectNode:
+		return writeObject(buf, n)
+	case *types.ArrayNode:
+		return writeArray(buf, n)
+	case *types.ValueNode:
+		buf.WriteString(getOptionallyQuotedValue(n.Value))
+		return nil
+	default:
+		return fmt.Errorf("unknown node type %T", node)
 	}
+}
 
+func writeObject(buf *bytes.Buffer, node *types.ObjectNode) error {
+	buf.WriteString("{")
+	for i, field := range node.Fields {
+		if i > 0 {
+			buf.WriteString(",")
+		}
+		buf.WriteString(fmt.Sprintf("\"%s\":", field.Key))
+		if err := writeNode(buf, field.Value); err != nil {
+			return err
+		}
+	}
+	buf.WriteString("}")
+	return nil
+}
+
+func writeArray(buf *bytes.Buffer, node *types.ArrayNode) error {
+	buf.WriteString("[")
+	for i, elem := range node.Elements {
+		if i > 0 {
+			buf.WriteString(",")
+		}
+		if err := writeNode(buf, elem); err != nil {
+			return err
+		}
+	}
+	buf.WriteString("]")
+	return nil
 }
