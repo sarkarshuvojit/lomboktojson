@@ -3,6 +3,7 @@ package generator
 import (
 	"testing"
 
+	"github.com/sarkarshuvojit/lomboktojson/pkg/parser"
 	"github.com/sarkarshuvojit/lomboktojson/types"
 	"github.com/stretchr/testify/assert"
 )
@@ -121,7 +122,11 @@ func TestGenerate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, _ := Generate(tt.tokens)
+			node, err := parser.Parse(tt.tokens)
+			assert.NoError(t, err)
+
+			result, err := Generate(node)
+			assert.NoError(t, err)
 			assert.JSONEq(t, tt.expected, string(result))
 		})
 	}

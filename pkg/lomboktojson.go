@@ -6,6 +6,7 @@ import (
 
 	"github.com/sarkarshuvojit/lomboktojson/pkg/beautifier"
 	"github.com/sarkarshuvojit/lomboktojson/pkg/generator"
+	"github.com/sarkarshuvojit/lomboktojson/pkg/parser"
 	"github.com/sarkarshuvojit/lomboktojson/pkg/scanner"
 )
 
@@ -25,7 +26,11 @@ func LombokToJson(in string) (*string, error) {
 	if err != nil {
 		return nil, err
 	}
-	if val, err := generator.Generate(tokens); err == nil {
+	node, err := parser.Parse(tokens)
+	if err != nil {
+		return nil, err
+	}
+	if val, err := generator.Generate(node); err == nil {
 		valStr := string(val)
 		return &valStr, nil
 	} else {
