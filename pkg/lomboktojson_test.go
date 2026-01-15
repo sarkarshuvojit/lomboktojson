@@ -62,6 +62,16 @@ func TestLombokToJson_NestedValidInputs(t *testing.T) {
 			input:    "Matrix(values=[[1,2],[3,4]])",
 			expected: `{"values":[[1,2],[3,4]]}`,
 		},
+		{
+			name:     "Truncated decimal treated as string",
+			input:    "Product(id=102,name=Laptop,price=[999.99...],inStock=true)",
+			expected: `{"id":102,"name":"Laptop","price":["999.99..."],"inStock":true}`,
+		},
+		{
+			name:     "Non-numeric float-like string",
+			input:    "Product(id=102,name=Laptop,price=99.99ggwwp,inStock=true)",
+			expected: `{"id":102,"name":"Laptop","price":"99.99ggwwp","inStock":true}`,
+		},
 	}
 
 	for _, tt := range tests {

@@ -57,7 +57,9 @@ func isNum(ch string) bool {
 }
 
 func isLiteral(ch string) bool {
-	return isAlpha(ch) || isNum(ch)
+	// Allow '.' to stay within a literal so we keep truncated floats intact (e.g., 999.99...)
+	// and let later numeric validation decide whether to quote or not.
+	return isAlpha(ch) || isNum(ch) || ch == "."
 }
 
 func (s *Scanner) stringLiteralToToken(literal string) types.Token {
