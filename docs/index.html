@@ -58,201 +58,207 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.0/min/vs/loader.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #3b82f6;
-            --primary-light: #60a5fa;
-            --primary-dark: #1d4ed8;
-            --accent: #8b5cf6;
-            --accent-light: #a78bfa;
-            --secondary: #06b6d4;
-            --background: #030712;
-            --surface-0: #0c1120;
-            --surface-1: #111827;
-            --surface-2: #1f2937;
-            --surface-3: #374151;
-            --text-primary: #ffffff;
-            --text-secondary: #e5e7eb;
-            --text-tertiary: #9ca3af;
-            --text-muted: #6b7280;
-            --border: #1f2937;
-            --border-light: #374151;
-            --success: #10b981;
-            --error: #ef4444;
-            --warning: #f59e0b;
+            --retro-bg: #f9f3dc;
+            --retro-surface: #fffaf0;
+            --retro-ink: #1f1f1f;
+            --retro-muted: #5b5b5b;
+            --retro-border: #2b2b2b;
+            --retro-shadow: #2b2b2b;
+            --retro-accent: #ff7a59;
+            --retro-accent-2: #4dabf7;
+            --retro-accent-3: #ffd43b;
+            --retro-success: #2f9e44;
         }
-        
+
         * {
             box-sizing: border-box;
         }
-        
+
         body {
-            background: linear-gradient(135deg, var(--background) 0%, #0a0f1c 100%);
-            color: var(--text-primary);
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--retro-bg);
+            background-image:
+                linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+                linear-gradient(180deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: var(--retro-ink);
+            font-family: "IBM Plex Mono", "Inter", system-ui, -apple-system, sans-serif;
             overflow-x: hidden;
-            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-        
-        .editor-container {
-            height: 500px;
-            border-radius: 0;
-            overflow: hidden;
-            background: var(--surface-1);
-            border: 1px solid var(--border);
-        }
-        
-        @media (max-width: 768px) {
-            .editor-container {
-                height: 400px;
-            }
-        }
-        
-        .glass-button {
-            background: rgba(59, 130, 246, 0.1);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-        
-        .glass-button:hover {
-            background: rgba(59, 130, 246, 0.15);
-            border-color: rgba(59, 130, 246, 0.3);
-            transform: translateY(-1px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        
-        .glass-button-accent {
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-        }
-        
-        .glass-button-accent:hover {
-            background: rgba(139, 92, 246, 0.15);
-            border-color: rgba(139, 92, 246, 0.3);
-        }
-        
-        .header-gradient {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 50%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 800;
-            letter-spacing: -0.025em;
-        }
-        
-        .hero-glow {
+
+        .retro-sun {
             position: absolute;
-            top: -50%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 800px;
-            height: 400px;
-            background: radial-gradient(ellipse, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            top: -120px;
+            right: 10%;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffd43b 0%, #ff7a59 60%, rgba(255, 122, 89, 0) 70%);
+            opacity: 0.6;
             pointer-events: none;
             z-index: 0;
         }
-        
-        .status-badge {
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            backdrop-filter: blur(8px);
+
+        .retro-title {
+            font-family: "Press Start 2P", "IBM Plex Mono", monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--retro-ink);
+            text-shadow: 3px 3px 0 var(--retro-accent-3);
         }
-        
-        .privacy-badge {
-            background: rgba(59, 130, 246, 0.05);
-            border: 1px solid rgba(59, 130, 246, 0.1);
-            backdrop-filter: blur(8px);
+
+        .retro-icon {
+            background: var(--retro-surface);
+            border: 3px solid var(--retro-border);
+            box-shadow: 4px 4px 0 var(--retro-shadow);
         }
-        
-        .editor-tabs {
-            background: var(--surface-0);
-            border-bottom: 1px solid var(--border);
+
+        .retro-badge {
+            background: var(--retro-surface);
+            border: 2px solid var(--retro-border);
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            box-shadow: 3px 3px 0 var(--retro-shadow);
+            font-weight: 600;
+        }
+
+        .retro-badge.success {
+            color: var(--retro-success);
+        }
+
+        .retro-badge.info {
+            color: var(--retro-accent-2);
+        }
+
+        .retro-window {
+            background: var(--retro-surface);
+            border: 3px solid var(--retro-border);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 6px 6px 0 var(--retro-shadow);
+        }
+
+        .retro-tabs {
             display: flex;
+            background: var(--retro-surface);
+            border-bottom: 3px solid var(--retro-border);
         }
-        
-        .editor-tab {
+
+        .retro-tab {
             flex: 1;
             padding: 1rem 1.5rem;
-            background: var(--surface-1);
-            border-right: 1px solid var(--border);
-            color: var(--text-tertiary);
-            font-weight: 500;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-            position: relative;
+            background: #ffeccc;
+            border-right: 3px solid var(--retro-border);
+            color: var(--retro-muted);
+            font-weight: 700;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
         }
-        
-        .editor-tab:last-child {
+
+        .retro-tab:last-child {
             border-right: none;
         }
-        
-        .editor-tab.active {
-            background: var(--surface-0);
-            color: var(--text-primary);
-            border-bottom: 2px solid var(--primary);
+
+        .retro-tab.active {
+            background: var(--retro-surface);
+            color: var(--retro-ink);
+            box-shadow: inset 0 -4px 0 var(--retro-accent-3);
         }
-        
-        .editor-wrapper {
-            background: var(--surface-0);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 
-                0 20px 25px -5px rgba(0, 0, 0, 0.1),
-                0 10px 10px -5px rgba(0, 0, 0, 0.04),
-                0 0 0 1px rgba(255, 255, 255, 0.05);
+
+        .retro-editor {
+            height: 500px;
+            background: #0b0f1f;
+            border: 3px solid var(--retro-border);
+            box-shadow: inset 0 0 0 2px #ffffff;
         }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+
+        @media (max-width: 768px) {
+            .retro-editor {
+                height: 400px;
+            }
         }
-        
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--surface-3);
-            border-radius: 3px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
-        }
-        
-        .floating-button {
+
+        .retro-fab {
             position: absolute;
             z-index: 10;
             padding: 0.5rem 0.75rem;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 0.8rem;
-            font-weight: 500;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 0.375rem;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.15s ease;
+            box-shadow: 3px 3px 0 var(--retro-shadow);
+            border: 2px solid var(--retro-border);
+            background: var(--retro-surface);
         }
-        
-        .floating-button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+        .retro-fab:hover {
+            transform: translate(-2px, -2px);
         }
-        
+
+        .retro-fab.primary {
+            background: #ffd43b;
+        }
+
+        .retro-fab.accent {
+            background: #ff9f1c;
+        }
+
+        .retro-fab.secondary {
+            background: #b8e1ff;
+        }
+
+        .examples-button {
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .copy-button {
+            bottom: 1rem;
+            right: 1rem;
+        }
+
+        .retro-button {
+            padding: 0.5rem 0.75rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            border: 2px solid var(--retro-border);
+            background: var(--retro-surface);
+            box-shadow: 3px 3px 0 var(--retro-shadow);
+            transition: transform 0.15s ease;
+        }
+
+        .retro-button:hover {
+            transform: translate(-2px, -2px);
+        }
+
+        .retro-button.primary {
+            background: #ffd43b;
+        }
+
+        .retro-button.accent {
+            background: #ff9f1c;
+        }
+
+        .retro-button.secondary {
+            background: #b8e1ff;
+        }
+
         .action-buttons-group {
             position: absolute;
             bottom: 1rem;
@@ -262,93 +268,52 @@
             z-index: 10;
         }
 
-        .action-button {
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            color: var(--text-secondary);
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.375rem;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .action-button:hover {
-            background: rgba(139, 92, 246, 0.15);
-            border-color: rgba(139, 92, 246, 0.3);
-            transform: translateY(-1px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        
-        .examples-button {
-            top: 1rem;
-            right: 1rem;
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            color: var(--text-secondary);
-        }
-        
-        .copy-button {
-            bottom: 1rem;
-            right: 1rem;
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            color: var(--text-secondary);
-        }
-
-        .copy-button:hover {
-            background: rgba(139, 92, 246, 0.15);
-            border-color: rgba(139, 92, 246, 0.3);
-        }
-        
         .editors-container {
             display: flex;
             flex-direction: column;
             min-height: 500px;
         }
-        
+
         .editor-panel {
             flex: 1;
             position: relative;
-            border-right: 1px solid var(--border);
+            border-right: 3px solid var(--retro-border);
+            padding: 1rem;
+            background: #fff4d6;
         }
-        
+
         .editor-panel:last-child {
             border-right: none;
         }
-        
+
         @media (min-width: 768px) {
             .editors-container {
                 flex-direction: row;
             }
-            
+
             .editor-panel {
                 border-bottom: none;
             }
         }
-        
+
         @media (max-width: 767px) {
             .editor-panel {
                 border-right: none;
-                border-bottom: 1px solid var(--border);
+                border-bottom: 3px solid var(--retro-border);
             }
-            
-            .hero-glow {
-                width: 400px;
+
+            .retro-sun {
+                width: 200px;
                 height: 200px;
+                top: -100px;
             }
-            
-            .floating-button {
+
+            .retro-fab {
                 padding: 0.4rem 0.6rem;
                 font-size: 0.75rem;
             }
 
-            .action-button {
+            .retro-button {
                 padding: 0.4rem 0.6rem;
                 font-size: 0.75rem;
             }
@@ -357,110 +322,108 @@
                 gap: 0.375rem;
             }
         }
-        
-        /* Dropdown styles */
-        .dropdown-menu {
+
+        .retro-menu {
             position: absolute;
             top: calc(100% + 0.5rem);
             right: 0;
-            background: var(--surface-1);
-            border: 1px solid var(--border-light);
-            border-radius: 8px;
+            background: var(--retro-surface);
+            border: 2px solid var(--retro-border);
+            border-radius: 10px;
             padding: 0.5rem;
-            min-width: 160px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(16px);
+            min-width: 170px;
+            box-shadow: 4px 4px 0 var(--retro-shadow);
             z-index: 50;
             opacity: 0;
-            transform: translateY(-10px) scale(0.95);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
             pointer-events: none;
         }
-        
-        .dropdown-menu.show {
+
+        .retro-menu.show {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
             pointer-events: auto;
         }
-        
-        .dropdown-item {
+
+        .retro-menu-item {
             padding: 0.5rem 0.75rem;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 0.875rem;
-            color: var(--text-secondary);
-            transition: all 0.15s ease;
-        }
-        
-        .dropdown-item:hover {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--text-primary);
-        }
-        
-        /* Footer improvements */
-        .footer-link {
-            color: var(--text-muted);
-            transition: all 0.2s ease;
-            text-decoration: none;
-        }
-        
-        .footer-link:hover {
-            color: var(--primary-light);
-            transform: translateY(-1px);
+            font-weight: 600;
+            color: var(--retro-ink);
+            transition: background 0.15s ease;
         }
 
-		textarea.iPadShowKeyboard {
-			display: none !important;
-		}
+        .retro-menu-item:hover {
+            background: #ffe08a;
+        }
+
+        .retro-link {
+            color: var(--retro-muted);
+            transition: transform 0.2s ease, color 0.2s ease;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .retro-link:hover {
+            color: var(--retro-ink);
+            transform: translateY(-2px);
+        }
+
+        textarea.iPadShowKeyboard {
+            display: none !important;
+        }
     </style>
 
 </head>
 <body class="min-h-screen relative overflow-x-hidden">
-    <!-- Hero glow effect -->
-    <div class="hero-glow"></div>
+    <!-- Retro sun accent -->
+    <div class="retro-sun"></div>
     
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 max-w-6xl relative z-10">
         <!-- Header -->
         <header class="text-center mb-12 sm:mb-16 relative">
             <div class="flex justify-center items-center mb-6 sm:mb-8">
                 <div class="flex items-center gap-4">
-                    <div class="p-3 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-blue-500/20">
+                    <div class="retro-icon p-3 rounded-2xl">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 sm:h-10 sm:w-10 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
                         </svg>
                     </div>
-                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold header-gradient">LombokToJson</h1>
+                    <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold retro-title">LombokToJson</h1>
                 </div>
             </div>
-            <p class="text-lg sm:text-xl text-slate-400 mb-8 max-w-2xl mx-auto leading-relaxed">
+            <p class="text-lg sm:text-xl text-stone-700 mb-8 max-w-2xl mx-auto leading-relaxed">
                 Transform Lombok @ToString output into structured JSON format with ease. Perfect for debugging, log parsing, and data analysis.
             </p>
 			<div class="flex flex-col sm:flex-row items-center justify-center gap-6">
-				<div class="status-badge flex items-center px-4 py-2 rounded-full">
-					<div class="h-2 w-2 rounded-full bg-green-400 mr-3 animate-pulse"></div>
-					<span class="text-green-300 text-sm font-medium">Offline Ready</span>
+				<div class="retro-badge success flex items-center gap-2">
+					<div class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+					<span class="text-sm">Offline Ready</span>
 				</div>
-				<div class="privacy-badge flex items-center px-4 py-2 rounded-full">
-					<svg class="w-5 h-5 text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<div class="retro-badge info flex items-center gap-2">
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
 					</svg>
-					<span class="text-blue-300 text-sm font-medium">Privacy First</span>
+					<span class="text-sm">Privacy First</span>
 				</div>
 			</div>
         </header>
 
         <!-- Editor Area -->
-        <div class="editor-wrapper mb-16">
+        <div class="retro-window mb-16">
             <!-- Editor Tabs -->
-            <div class="editor-tabs">
-                <div class="editor-tab active">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="retro-tabs">
+                <div class="retro-tab active">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                     </svg>
                     <span>Lombok toString</span>
                 </div>
-                <div class="editor-tab">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-cyan-400" fill="currentColor" viewBox="0 0 16 16">
+                <div class="retro-tab">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-sky-600" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M2.114 8.063V7.9c1.005-.102 1.497-.615 1.497-1.6V4.503c0-1.094.39-1.538 1.354-1.538h.273V2h-.376C3.25 2 2.49 2.759 2.49 4.352v1.524c0 1.094-.376 1.456-1.49 1.456v1.299c1.114 0 1.49.362 1.49 1.456v1.524c0 1.593.759 2.352 2.372 2.352h.376v-.964h-.273c-.964 0-1.354-.444-1.354-1.538V9.663c0-.984-.492-1.497-1.497-1.6M13.886 7.9v.163c-1.005.103-1.497.616-1.497 1.6v1.798c0 1.094-.39 1.538-1.354 1.538h-.273v.964h.376c1.613 0 2.372-.759 2.372-2.352v-1.524c0-1.094.376-1.456 1.49-1.456V7.332c-1.114 0-1.49-.362-1.49-1.456V4.352C13.51 2.759 12.75 2 11.138 2h-.376v.964h.273c.964 0 1.354.444 1.354 1.538V6.3c0 .984.492 1.497 1.497 1.6"/>
                     </svg>
                     <span>JSON Output</span>
@@ -472,7 +435,7 @@
                 <!-- Input Editor Panel -->
                 <div class="editor-panel">
                     <!-- Examples Dropdown -->
-                    <div class="examples-button floating-button glass-button-accent">
+                    <div class="retro-fab accent examples-button">
                         <button id="examples-dropdown" class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -482,23 +445,23 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-                        <div id="samples-menu" class="dropdown-menu">
-                            <div id="userSample" class="dropdown-item">User Object</div>
-                            <div id="productSample" class="dropdown-item">Product Entity</div>
-                            <div id="addressSample" class="dropdown-item">Address Model</div>
-                            <div id="complexSample" class="dropdown-item">Nested Structure</div>
+                        <div id="samples-menu" class="retro-menu">
+                            <div id="userSample" class="retro-menu-item">User Object</div>
+                            <div id="productSample" class="retro-menu-item">Product Entity</div>
+                            <div id="addressSample" class="retro-menu-item">Address Model</div>
+                            <div id="complexSample" class="retro-menu-item">Nested Structure</div>
                         </div>
                     </div>
                     
                     <!-- Action Buttons -->
                     <div class="action-buttons-group">
-                        <button id="beautifyButton" class="action-button">
+                        <button id="beautifyButton" class="retro-button secondary">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
                             </svg>
                             <span>Auto-Indent</span>
                         </button>
-                        <button id="convertButton" class="action-button">
+                        <button id="convertButton" class="retro-button accent">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                             </svg>
@@ -506,35 +469,35 @@
                         </button>
                     </div>
                     
-                    <div class="editor-container" id="javaEditor"></div>
+                    <div class="retro-editor" id="javaEditor"></div>
                 </div>
                 
                 <!-- Output Editor Panel -->
                 <div class="editor-panel">
                     <!-- Copy Button -->
-                    <button id="copyButton" class="copy-button floating-button">
+                    <button id="copyButton" class="retro-fab secondary copy-button">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                         </svg>
                         <span>Copy</span>
                     </button>
                     
-                    <div class="editor-container" id="jsonEditor"></div>
+                    <div class="retro-editor" id="jsonEditor"></div>
                 </div>
             </div>
         </div>
         
         <!-- Footer -->
-        <footer class="mt-20 border-gray-800/50 pt-12 pb-8">
+        <footer class="mt-20 border-black/40 pt-12 pb-8">
             <div class="flex flex-col md:flex-row justify-between items-center gap-6">
                 <div class="flex items-center gap-6">
-                    <a href="https://github.com/sarkarshuvojit/lomboktojson" class="footer-link flex items-center gap-2" target="_blank">
+                    <a href="https://github.com/sarkarshuvojit/lomboktojson" class="retro-link flex items-center gap-2" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
                         </svg>
                         <span class="text-sm font-medium">GitHub</span>
                     </a>
-                    <a href="https://shuvojit.dev/#projects" class="footer-link flex items-center gap-2" target="_blank">
+                    <a href="https://shuvojit.dev/#projects" class="retro-link flex items-center gap-2" target="_blank">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                             <path d="M8 0C3.58 0 0 3.58 0 8s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zM5.5 7.5A1.5 1.5 0 1 1 4 6a1.5 1.5 0 0 1 1.5 1.5zM8 12a4 4 0 0 1-4-4 1 1 0 1 1 2 0 2 2 0 0 0 4 0 1 1 0 1 1 2 0 4 4 0 0 1-4 4z"/>
                         </svg>
@@ -542,7 +505,7 @@
                     </a>
                 </div>
                 <div class="text-center">
-                    <p class="text-slate-400 text-sm leading-relaxed">
+                    <p class="text-stone-600 text-sm leading-relaxed">
                         Transform messy Lombok toString outputs into clean, structured JSON
                     </p>
                 </div>
@@ -588,4 +551,3 @@
     </script>
 </body>
 </html>
-
