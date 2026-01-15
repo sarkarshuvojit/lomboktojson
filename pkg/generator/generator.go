@@ -47,6 +47,10 @@ var tokenTypeGeneratorMapping map[types.TokenType]singleTokenToJson = map[types.
 		t := ts[i]
 		return []byte(getOptionallyQuotedValue(t.Lexeme)), true
 	},
+	types.STRING_LITERAL: func(i int, ts []types.Token) ([]byte, bool) {
+		t := ts[i]
+		return []byte(getOptionallyQuotedValue(t.Lexeme)), true
+	},
 	types.EQUALS: func(i int, ts []types.Token) ([]byte, bool) {
 		// t := ts[i]
 		return []byte(`:`), true

@@ -61,7 +61,7 @@ func isLiteral(ch string) bool {
 }
 
 func (s *Scanner) stringLiteralToToken(literal string) types.Token {
-	if s.sourceBytes[s.literalEnd+1] == '(' {
+	if s.literalEnd+1 < len(s.sourceBytes) && s.sourceBytes[s.literalEnd+1] == '(' {
 		return types.NewToken(
 			types.CLASS_NAME,
 			string(literal),
@@ -69,7 +69,7 @@ func (s *Scanner) stringLiteralToToken(literal string) types.Token {
 			s.curline,
 		)
 	}
-	if s.sourceBytes[s.literalEnd+1] == '=' {
+	if s.literalEnd+1 < len(s.sourceBytes) && s.sourceBytes[s.literalEnd+1] == '=' {
 		return types.NewToken(
 			types.KEY,
 			string(literal),
@@ -77,7 +77,7 @@ func (s *Scanner) stringLiteralToToken(literal string) types.Token {
 			s.curline,
 		)
 	}
-	if s.sourceBytes[s.literalStart-1] == '=' {
+	if s.literalStart-1 >= 0 && s.sourceBytes[s.literalStart-1] == '=' {
 		return types.NewToken(
 			types.VALUE,
 			string(literal),
@@ -96,6 +96,9 @@ func (s *Scanner) stringLiteralToToken(literal string) types.Token {
 
 func (s *Scanner) clearStringLiterals() {
 	if s.literalStarted {
+		if s.literalEnd < s.literalStart {
+			s.literalEnd = s.literalStart
+		}
 		literal := s.sourceBytes[s.literalStart : s.literalEnd+1]
 		_token := types.NewToken(
 			types.STRING_LITERAL,
@@ -191,6 +194,7 @@ func (s *Scanner) Scan() []types.Token {
 				} else {
 					s.literalStarted = true
 					s.literalStart = chIdx
+					s.literalEnd = chIdx
 				}
 			}
 		}

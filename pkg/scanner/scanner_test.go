@@ -256,3 +256,62 @@ func Test_ScanTheCustomerWithArrayField(t *testing.T) {
 		}
 	})
 }
+
+func Test_ScanArrayOfObjects(t *testing.T) {
+	source := `Invoice(items=[Item(id=1),Item(id=2)])`
+	t.Run("Invoice(items[]): TokenLength & Lexemes", func(t *testing.T) {
+		var sourceBuf bytes.Buffer
+		sourceBuf.WriteString(source)
+		scanner := NewScanner(&sourceBuf)
+		tokens := scanner.Scan()
+
+		expectedTokenLen := 21
+		if len(tokens) != expectedTokenLen {
+			t.Errorf("Should return %d tokens including EOF, got %d", expectedTokenLen, len(tokens))
+			return
+		}
+
+		expectedTokens := [21]string{
+			"Invoice", "(", "items", "=", "[",
+			"Item", "(", "id", "=", "1", ")", ",",
+			"Item", "(", "id", "=", "2", ")", "]",
+			")",
+		}
+
+		for i := 0; i < len(expectedTokens); i++ {
+			expectedToken := expectedTokens[i]
+			actualToken := tokens[i]
+			if actualToken.Lexeme != expectedToken {
+				t.Errorf("Token #%d lexeme expected %s got %s", i+1, expectedToken, tokens[i].Lexeme)
+			}
+		}
+	})
+	t.Run("Invoice(items[]): TokenTypes", func(t *testing.T) {
+		var sourceBuf bytes.Buffer
+		sourceBuf.WriteString(source)
+		scanner := NewScanner(&sourceBuf)
+		tokens := scanner.Scan()
+
+		expectedTokenLen := 21
+		if len(tokens) != expectedTokenLen {
+			t.Errorf("Should return %d tokens including EOF, got %d", expectedTokenLen, len(tokens))
+			return
+		}
+
+		expectedTokenTypes := [21]types.TokenType{
+			types.CLASS_NAME, types.PAREN_OPEN, types.KEY, types.EQUALS, types.ARRAY_OPEN,
+			types.CLASS_NAME, types.PAREN_OPEN, types.KEY, types.EQUALS, types.VALUE, types.PAREN_CLOSE, types.COMMA,
+			types.CLASS_NAME, types.PAREN_OPEN, types.KEY, types.EQUALS, types.VALUE, types.PAREN_CLOSE, types.ARRAY_CLOSE,
+			types.PAREN_CLOSE,
+			types.EOF,
+		}
+
+		for i := 0; i < len(expectedTokenTypes); i++ {
+			expectedTokenType := expectedTokenTypes[i]
+			actualToken := tokens[i]
+			if actualToken.Type != expectedTokenType {
+				t.Errorf("Token #%d type expected %s got %s", i+1, expectedTokenType, tokens[i].Type)
+			}
+		}
+	})
+}
