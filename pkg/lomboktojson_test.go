@@ -166,7 +166,18 @@ func TestLombokToJson_ArrayClosedWithParen(t *testing.T) {
 	if err == nil {
 		t.Fatalf("Expected error due to mismatched closing token but got result: %v", result)
 	}
-	if !errors.Is(err, parser.ErrUnexpectedToken) {
+	if !errors.Is(err, parser.ErrMismatchedCloser) {
+		t.Fatalf("Unexpected error type: %v", err)
+	}
+}
+
+func TestLombokToJson_ObjectClosedWithBracket(t *testing.T) {
+	input := "Customer(name=Raju]"
+	result, err := pkg.LombokToJson(input)
+	if err == nil {
+		t.Fatalf("Expected error due to mismatched closing token but got result: %v", result)
+	}
+	if !errors.Is(err, parser.ErrMismatchedCloser) {
 		t.Fatalf("Unexpected error type: %v", err)
 	}
 }

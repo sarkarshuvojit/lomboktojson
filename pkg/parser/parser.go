@@ -83,6 +83,9 @@ func (p *Parser) parseObject() (types.Node, error) {
 		if p.check(types.PAREN_CLOSE) {
 			break
 		}
+		if peek := p.peek(); peek.Type == types.ARRAY_CLOSE {
+			return nil, fmt.Errorf("%w: got %s at line %d", ErrMismatchedCloser, peek.Type, peek.Line)
+		}
 		if p.isAtEnd() {
 			return nil, ErrUnexpectedEOF
 		}
@@ -121,6 +124,9 @@ func (p *Parser) parseArray() (types.Node, error) {
 		if p.check(types.ARRAY_CLOSE) {
 			break
 		}
+		if peek := p.peek(); peek.Type == types.PAREN_CLOSE {
+			return nil, fmt.Errorf("%w: got %s at line %d", ErrMismatchedCloser, peek.Type, peek.Line)
+		}
 		if p.isAtEnd() {
 			return nil, ErrUnexpectedEOF
 		}
@@ -153,7 +159,12 @@ func (p *Parser) consume(tokenType types.TokenType, message string) (types.Token
 	if p.check(tokenType) {
 		return p.advance(), nil
 	}
-	return types.Token{}, fmt.Errorf("%s at line %d", message, p.peek().Line)
+	peek := p.peek()
+	if (tokenType == types.PAREN_CLOSE && peek.Type == types.ARRAY_CLOSE) ||
+		(tokenType == types.ARRAY_CLOSE && peek.Type == types.PAREN_CLOSE) {
+		return types.Token{}, fmt.Errorf("%w: got %s at line %d", ErrMismatchedCloser, peek.Type, peek.Line)
+	}
+	return types.Token{}, fmt.Errorf("%s at line %d", message, peek.Line)
 }
 
 func (p *Parser) advance() types.Token {

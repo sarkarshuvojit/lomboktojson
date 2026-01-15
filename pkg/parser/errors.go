@@ -9,4 +9,5 @@ var (
 	ErrTrailingTokens      = errors.New("parser: trailing tokens after parse")
 	ErrTrailingCommaObject = errors.New("parser: trailing comma before ')'")
 	ErrTrailingCommaArray  = errors.New("parser: trailing comma before ']'")
+	ErrMismatchedCloser    = errors.New("parser: mismatched closing token")
 )
