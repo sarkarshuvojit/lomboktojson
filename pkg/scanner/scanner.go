@@ -182,7 +182,7 @@ func (s *Scanner) Scan() []types.Token {
 				s.curline,
 			)
 			s.tokens = append(s.tokens, _token)
-			s.parenOpen++
+			s.parenOpen--
 			break
 		default:
 			if isLiteral(ch) {
