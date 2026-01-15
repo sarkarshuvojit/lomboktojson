@@ -23,6 +23,9 @@ func Parse(tokens []types.Token) (types.Node, error) {
 	if err != nil {
 		return nil, err
 	}
+	if !p.isAtEnd() {
+		return nil, fmt.Errorf("unexpected token %s at line %d", p.peek().Type, p.peek().Line)
+	}
 	return node, nil
 }
 

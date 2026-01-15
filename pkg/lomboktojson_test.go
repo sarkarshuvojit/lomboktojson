@@ -114,3 +114,11 @@ func TestLombokToJson_InvalidInputMissingValue(t *testing.T) {
 		t.Fatalf("Unexpected error: %v", err)
 	}
 }
+
+func TestLombokToJson_InvalidTrailingTokens(t *testing.T) {
+	input := "Customer(name=Raju) stray"
+	result, err := pkg.LombokToJson(input)
+	if err == nil {
+		t.Fatalf("Expected error due to trailing tokens but got result: %v", result)
+	}
+}
